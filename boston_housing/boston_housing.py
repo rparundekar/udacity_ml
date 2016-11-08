@@ -17,19 +17,19 @@ features = data.drop('MEDV', axis = 1)
 # Success
 print "Boston housing dataset has {} data points with {} variables each.".format(*data.shape)
 
-# TODO: Minimum price of the data
+# Minimum price of the data
 minimum_price = np.min(prices)
 
-# TODO: Maximum price of the data
+# Maximum price of the data
 maximum_price = np.max(prices)
 
-# TODO: Mean price of the data
+# Mean price of the data
 mean_price = np.mean(prices)
 
-# TODO: Median price of the data
+# Median price of the data
 median_price = np.median(prices)
 
-# TODO: Standard deviation of prices of the data
+# Standard deviation of prices of the data
 std_price = np.std(prices)
 
 # Show the calculated statistics
