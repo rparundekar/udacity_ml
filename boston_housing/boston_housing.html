@@ -11842,20 +11842,20 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># TODO: Minimum price of the data</span>
-<span class="n">minimum_price</span> <span class="o">=</span> <span class="bp">None</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Minimum price of the data</span>
+<span class="n">minimum_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
 
-<span class="c1"># TODO: Maximum price of the data</span>
-<span class="n">maximum_price</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1"># Maximum price of the data</span>
+<span class="n">maximum_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
 
-<span class="c1"># TODO: Mean price of the data</span>
-<span class="n">mean_price</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1"># Mean price of the data</span>
+<span class="n">mean_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
 
-<span class="c1"># TODO: Median price of the data</span>
-<span class="n">median_price</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1"># Median price of the data</span>
+<span class="n">median_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
 
-<span class="c1"># TODO: Standard deviation of prices of the data</span>
-<span class="n">std_price</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1"># Standard deviation of prices of the data</span>
+<span class="n">std_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
 
 <span class="c1"># Show the calculated statistics</span>
 <span class="k">print</span> <span class="s2">&quot;Statistics for Boston housing dataset:</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -12022,9 +12022,11 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer:</strong> 
-a) The R<sup>2</sup> score gives an estimate of how well does the variation in the prediction can be explained by the variation in the target variable. An R<sup>2</sup> of 1 indicates that the regression line perfectly fits the data. Even though the score of 0.923 (see below) is not exactly 1 it is sufficiently high (based on empirical values for a good fit) for us to consider that the model has successfully captured the variation of the target variable. Of course more data examples would have increased our confidence in the fit.<br/>
-b) Model has a coefficient of determination, R^2, of 0.923.</p>
+<p><strong>Answer:</strong> <br/></p>
+<ul>
+<li>The R<sup>2</sup> score gives an estimate of how well does the variation in the prediction can be explained by the variation in the target variable. An R<sup>2</sup> of 1 indicates that the regression line perfectly fits the data. Even though the score of 0.923 (see below) is not exactly 1 it is sufficiently high (based on empirical values for a good fit) for us to consider that the model has successfully captured the variation of the target variable. Of course more data examples would have increased our confidence in the fit.<br/></li>
+<li>Model has a coefficient of determination, R^2, of 0.923.</li>
+</ul>
 
 </div>
 </div>
@@ -12086,7 +12088,7 @@ b) Model has a coefficient of determination, R^2, of 0.923.</p>
 <p><strong>Answer: </strong> The purpose of Machine Learning is to learn a model that can be used in the real world. If we train the model on the entire dataset, two things would happen: 
 (1) We would end up overfitting the model to the training data, essentially working as some sort of look-up table when we test the data with the training set. Thus we would be 'memorizing' more than 'learning'; and 
 (2) Since predictions using the model on the training set will lead to good prediction precision and recall scores on the training set, we will falsely believe that the model is ready for the real world, when in fact it will not generalize.</p>
-<p>Benefit: With a train and test split, we essentially train the model on a part of the data that we feel might be representative of the real world data, and test the model on the test set which will be our stand-in for 'unseen real world data' which hopefully will help give us confidence on the performance of the model in the real world.</p>
+<p><em>Benefit</em>: With a train and test split, we essentially train the model on a part of the data that we feel might be representative of the real world data, and test the model on the test set which will be our stand-in for 'unseen real world data' which hopefully will help give us confidence on the performance of the model in the real world.</p>
 <p>A random sampling of the train and test data avoids learning on sequential data (typical of sorted databases). A cross validation (e.g. K-fold validation) presents a more robust estimate by rotating through training and testing data by leaving one fold out.</p>
 
 </div>
