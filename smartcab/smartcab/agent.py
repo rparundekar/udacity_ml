@@ -32,17 +32,16 @@ class LearningAgent(Agent):
 
         # Select the destination as the new location to route to
         self.planner.route_to(destination)
-        
        
         # Update epsilon using a decay function of your choice
         # Update additional class parameters as needed
         import math
         
-        if self.t < 40 : 
+        if self.t < 75 : 
             self.epsilon = self.epsilon - 0.01
         else:
-            self.epsilon = self.epsilon - 0.005
-        self.alpha  = 0.66# - ((1-self.epsilon)*0.25)
+            self.epsilon = self.epsilon - 0.0025
+        self.alpha  = 0.66 
         # self.epsilon=1 - math.sin(0.01* self.t)
         # self.epsilon= 1 / ((1 +(0.1*self.t)) * (1 +(0.1*self.t)))
 
@@ -64,17 +63,10 @@ class LearningAgent(Agent):
         inputs = self.env.sense(self)           # Visual input - intersection light and traffic
         deadline = self.env.get_deadline(self)  # Remaining deadline
 
-        ########### 
-        ## TO DO ##
-        ###########
+
         # Set 'state' as a tuple of relevant data for the agent
-        # When learning, check if the state is in the Q-table
-        #   If it is not, create a dictionary in the Q-table for the current 'state'
-        #   For each action, set the Q-value for the state-action pair to 0
-        
+       
         state = waypoint + "_" + inputs.get('light')  
-        
-        
         temp=inputs.get('left')
         if temp is None: 
             temp = 'None'
@@ -89,10 +81,14 @@ class LearningAgent(Agent):
         if temp is None: 
             temp = 'None'
         state = state + "_" + temp   
-            
-        if state not in self.Q:
-            newActions= {  None: 0, 'left': 0, 'right':0, 'forward':0}
-            self.Q[state] = newActions
+        
+        # When learning, check if the state is in the Q-table
+        #   If it is not, create a dictionary in the Q-table for the current 'state'
+        #   For each action, set the Q-value for the state-action pair to 0
+        if self.learning is True:
+            if state not in self.Q:
+                newActions= {  None: 0, 'left': 0, 'right':0, 'forward':0}
+                self.Q[state] = newActions
             
         return state
 
@@ -120,10 +116,10 @@ class LearningAgent(Agent):
         # When learning, check if the 'state' is not in the Q-table
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
-        
-        if self.Q.get(state) is None:
-            newActions= {  None: 0, 'left': 0, 'right':0, 'forward':0}
-            self.Q[state] = newActions
+        if self.learning is True:
+            if self.Q.get(state) is None:
+                newActions= {  None: 0, 'left': 0, 'right':0, 'forward':0}
+                self.Q[state] = newActions
         return
 
 
@@ -136,26 +132,26 @@ class LearningAgent(Agent):
         self.next_waypoint = self.planner.next_waypoint()
         
 
-        # When not learning, choose a random action
         import random
-        action = random.choice(self.valid_actions)
-        
-        
-        # When learning, choose a random action with 'epsilon' probability
-        #   Otherwise, choose an action with the highest Q-value for the current state
-        if random.random() < self.epsilon : 
+        action = None
+        if self.learning is not True:
+            # When not learning, choose a random action
             action = random.choice(self.valid_actions)
         else:
-            dict=self.Q.get(state)
-            maxQ = 0.0
-            maxV=None
-            if dict is not None:
-                for key in dict:
-                    qValue=dict.get(key)
-                    if qValue>maxQ: 
-                        maxQ=qValue
-                        maxV=key
-            action=maxV
+            # When learning, choose a random action with 'epsilon' probability
+            #   Otherwise, choose an action with the highest Q-value for the current state
+            if random.random() < self.epsilon : 
+                action = random.choice(self.valid_actions)
+            else:
+                maxQ = self.get_maxQ(state)
+                if maxQ is 0.0:
+                    action = random.choice(self.valid_actions)
+                else:
+                    best_actions = [action for action in self.valid_actions if abs(self.Q[state][action] - maxQ)<=0.005]
+                    if not best_actions:
+                        action = random.choice(self.valid_actions)
+                    else:
+                        action = random.choice(best_actions)
             
         return action
 
@@ -165,16 +161,15 @@ class LearningAgent(Agent):
             receives an award. This function does not consider future rewards 
             when conducting learning. """
 
-        ########### 
-        ## TO DO ##
-        ###########
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
-        
-        dict=self.Q.get(state)
-        qValue = dict.get(action)
-        newReward = ((1-self.alpha)* qValue) + (self.alpha * (reward))
-        dict[action]=newReward
+        if self.learning is True:
+            dict=self.Q.get(state)
+            qValue = dict.get(action)
+            newReward = ((1-self.alpha)* qValue) + (self.alpha * (reward))
+            dict[action]=newReward
+            
+            
         return 
 
 
