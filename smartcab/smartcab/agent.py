@@ -37,13 +37,14 @@ class LearningAgent(Agent):
         # Update additional class parameters as needed
         import math
         
-        if self.t < 75 : 
-            self.epsilon = self.epsilon - 0.01
+        if self.t < 100 : 
+            self.epsilon = self.epsilon - 0.002
         else:
-            self.epsilon = self.epsilon - 0.0025
-        self.alpha  = 0.66 
-        # self.epsilon=1 - math.sin(0.01* self.t)
+            self.epsilon = self.epsilon - 0.008
+        # self.epsilon=1 - math.sin(0.008* self.t)
+        # self.epsilon=math.cos(0.008* self.t)
         # self.epsilon= 1 / ((1 +(0.1*self.t)) * (1 +(0.1*self.t)))
+        self.alpha  = self.alpha - 0.003
 
         # If 'testing' is True, set epsilon and alpha to 0
         if testing is True:
@@ -100,12 +101,13 @@ class LearningAgent(Agent):
        
         # Calculate the maximum Q-value of all actions for a given state
         dict=self.Q.get(state)
-        maxQ = 0.0
-        if dict is not None:
-            for key in dict:
-                qValue=dict.get(key)
-                if qValue>maxQ: 
-                    maxQ=qValue
+        import sys
+        
+        maxQ = -sys.maxint - 1
+        for action in self.valid_actions:
+            qValue=dict.get(action)
+            if qValue>maxQ: 
+                maxQ=qValue
         
         return maxQ 
 
@@ -144,14 +146,13 @@ class LearningAgent(Agent):
                 action = random.choice(self.valid_actions)
             else:
                 maxQ = self.get_maxQ(state)
-                if maxQ is 0.0:
-                    action = random.choice(self.valid_actions)
-                else:
-                    best_actions = [action for action in self.valid_actions if abs(self.Q[state][action] - maxQ)<=0.005]
-                    if not best_actions:
-                        action = random.choice(self.valid_actions)
-                    else:
-                        action = random.choice(best_actions)
+                dict = self.Q.get(state)
+                best_actions =[]
+                for a in dict:
+                    if dict[a] == maxQ :
+                        best_actions.append(a)
+                print len(dict), " ", len(best_actions), " ", maxQ, " ", dict        
+                action = random.choice(best_actions)
             
         return action
 
@@ -205,7 +206,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning=True, alpha=0.5)
+    agent = env.create_agent(LearningAgent, learning=True, alpha=0.75)
     
     ##############
     # Follow the driving agent

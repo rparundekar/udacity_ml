@@ -12206,9 +12206,12 @@ $$ \epsilon_{t+1} = \epsilon_{t} - 0.05, \hspace{10px}\textrm{for trial number }
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># def choose_action(self, state):</span>
 <span class="c1">#         &quot;&quot;&quot; The choose_action function is called when the agent is asked to choose</span>
 <span class="c1">#             which action to take, based on the &#39;state&#39; the smartcab is in. &quot;&quot;&quot;</span>
+
 <span class="c1">#         # Set the agent state and default action</span>
 <span class="c1">#         self.state = state</span>
 <span class="c1">#         self.next_waypoint = self.planner.next_waypoint()</span>
+        
+
 <span class="c1">#         import random</span>
 <span class="c1">#         action = None</span>
 <span class="c1">#         if self.learning is not True:</span>
@@ -12221,14 +12224,13 @@ $$ \epsilon_{t+1} = \epsilon_{t} - 0.05, \hspace{10px}\textrm{for trial number }
 <span class="c1">#                 action = random.choice(self.valid_actions)</span>
 <span class="c1">#             else:</span>
 <span class="c1">#                 maxQ = self.get_maxQ(state)</span>
-<span class="c1">#                 if maxQ is 0.0:</span>
-<span class="c1">#                     action = random.choice(self.valid_actions)</span>
-<span class="c1">#                 else:</span>
-<span class="c1">#                     best_actions = [action for action in self.valid_actions if abs(self.Q[state][action] - maxQ)&lt;=0.005]</span>
-<span class="c1">#                     if not best_actions:</span>
-<span class="c1">#                         action = random.choice(self.valid_actions)</span>
-<span class="c1">#                     else:</span>
-<span class="c1">#                         action = random.choice(best_actions)</span>
+<span class="c1">#                 dict = self.Q.get(state)</span>
+<span class="c1">#                 best_actions =[]</span>
+<span class="c1">#                 for a in dict:</span>
+<span class="c1">#                     if dict[a] == maxQ :</span>
+<span class="c1">#                         best_actions.append(a)</span>
+<span class="c1">#                 print len(dict), &quot; &quot;, len(best_actions), &quot; &quot;, maxQ, &quot; &quot;, dict        </span>
+<span class="c1">#                 action = random.choice(best_actions)</span>
 <span class="c1">#         return action</span>
 <span class="c1">#</span>
 <span class="c1">#     def learn(self, state, action, reward):</span>
@@ -12343,27 +12345,23 @@ $$ \epsilon = a^t, \textrm{for } 0 < a < 1 \hspace{50px}\epsilon = \frac{1}{t^2}
 <span class="c1">#         &quot;&quot;&quot; The reset function is called at the beginning of each trial.</span>
 <span class="c1">#             &#39;testing&#39; is set to True if testing trials are being used</span>
 <span class="c1">#             once training trials have completed. &quot;&quot;&quot;</span>
-<span class="c1">#</span>
 <span class="c1">#         # Select the destination as the new location to route to</span>
 <span class="c1">#         self.planner.route_to(destination)</span>
-<span class="c1">#       </span>
 <span class="c1">#         # Update epsilon using a decay function of your choice</span>
 <span class="c1">#         # Update additional class parameters as needed</span>
 <span class="c1">#         import math</span>
-<span class="c1">#        </span>
-<span class="c1">#         if self.t &lt; 75 : </span>
-<span class="c1">#             self.epsilon = self.epsilon - 0.01</span>
+<span class="c1">#         if self.t &lt; 100 : </span>
+<span class="c1">#             self.epsilon = self.epsilon - 0.002</span>
 <span class="c1">#         else:</span>
-<span class="c1">#             self.epsilon = self.epsilon - 0.0025</span>
-<span class="c1">#         self.alpha  = 0.66 </span>
-<span class="c1">#         # self.epsilon=1 - math.sin(0.01* self.t)</span>
+<span class="c1">#             self.epsilon = self.epsilon - 0.008</span>
+<span class="c1">#         # self.epsilon=1 - math.sin(0.008* self.t)</span>
+<span class="c1">#         # self.epsilon=math.cos(0.008* self.t)</span>
 <span class="c1">#         # self.epsilon= 1 / ((1 +(0.1*self.t)) * (1 +(0.1*self.t)))</span>
-<span class="c1">#</span>
+<span class="c1">#         self.alpha  = self.alpha - 0.003</span>
 <span class="c1">#         # If &#39;testing&#39; is True, set epsilon and alpha to 0</span>
 <span class="c1">#         if testing is True:</span>
 <span class="c1">#             self.epsilon=0</span>
 <span class="c1">#             self.alpha=0</span>
-<span class="c1">#</span>
 <span class="c1">#         self.t = self.t+1</span>
 <span class="c1">#         return None</span>
     
@@ -12410,12 +12408,12 @@ $$ \epsilon = a^t, \textrm{for } 0 < a < 1 \hspace{50px}\epsilon = \frac{1}{t^2}
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong>
-a)  My intuition in selecting this was we need a good exploration of states &amp; actions to get different combinations. This gave good coverage for initial safety values.  But in the exploitation, we need enough time select actions with higher rewards. That is, our reliability will be hiher if we reach the destination faster in the trial. Safety increases along with reliability in the exploitation phase.  I tried multiple functions (cosine, 1-sine, increase in rate of decay, etc. totalling to about 25 different trials) Finally, I decided to use a combination linear decay, first until 75 trials decays quickly and then decays very slowly. <br/>
-b) Based on the need for more trials identified in the state space question I aimed at about 175 trials. I updated the line functions in a way to achieve this. (75 steps of 0.01 &amp; then 100 steps of 0.0025) <br/>
+a)  My intuition in selecting this was we need a good exploration of states &amp; actions to get different combinations. This gave good coverage for initial safety values.  But in the exploitation, we need enough time select actions with higher rewards. That is, our reliability will be hiher if we reach the destination faster in the trial. Safety increases along with reliability in the exploitation phase.  I tried multiple functions (cosine, 1-sine, increase in rate of decay, etc. totalling to about 25 different trials) Finally, I decided to use a combination linear decay, first until 10 trials decays slowly and then decays faster. <br/>
+b) Based on the need for more trials identified in the state space question I aimed at about 200 trials. I updated the line functions in a way to achieve this. (100 steps of 0.002 &amp; then 100 steps of 0.008) <br/>
 c) My epsilon tolerance was 0.025. Initially I tried different options like threshold like 0.2. But I realized that the learning needs to spend a large time exploiting to increase both reliability &amp; safety. <br/>
-d) Improvement was considerable. The final total number of bad actions decreased from about 0.13 in default to 0.03, the final average reward increased from 0.2 to 1.2. Safety &amp; Reliability increased from B &amp; D rating to A+ &amp; A+. <br/>
-e) Yes.  We can see that the average reward function increases as the trials progress.  The total number of actions also decreases. The bad actions causing both minor and major violation and accidents increases. This means that the learner is able to learn the right policy. <br/>
-f) Yes, after spending 6 hours with different combinations, I was able to get A+ &amp; A+ Safety &amp; Reliability rating. I had to change the alpha value as well to reach these goals. After different trials I was able to finalize an alpha where it was updating values twice as much weight as old values. This means the learning steps is large, and takes long time to converge.</p>
+d) Improvement was considerable. Compared to the default learner, the final total number of bad actions decreased from about 0.13 in default to 0.04, the final average reward increased from 0.2 to 1.2. Safety &amp; Reliability increased from B &amp; D rating to A+ &amp; B.<br/>
+e) Yes.  We can see that the average reward function increases as the trials progress.  The total number of actions also decreases. The bad actions causing both minor and major violation and accidents increases. This means that the learner is able to learn the right policy. I discuss on the reliability below. <br/>
+f) Yes, after spending 8 hours with different combinations, I was able to get A+ &amp; B Safety &amp; Reliability rating. I had to change the alpha value as well to reach these goals. After different trials I was able to finalize an alpha with a decay. This means in the exploration phase, the learning steps is large, but reduces as we switch to exploitation. I was hoping to get better reliability, but this seemed the best for now.</p>
 
 </div>
 </div>
@@ -12453,10 +12451,10 @@ c) If the light is green and agent wants to move forward or right, agent has rig
 d) If the light is green and agent wants to turn left, then it can only do so if there is no car oncoming from the front or there is a car and it not going straight or turning right.<br/>
 <br/>
 Examples of optimal policy that was learnt:<br/>
-When the light is red, and we have to take a right turn, we can do so if theres no car coming from the left. - In the learned file we see that right_red_None_None_None (Waypoint is right, and there is no car coming from the left) the reward for right is maximum { forward : -10.35, right : 1.57, None : 0.55, left : -10.48}. But, if there is a car coming front from the left, it is best to stay idle, as any other action will cause accident. We see that for right_red_forward_None_None (Waypoint is right, and there is a car coming straight from the left) the max reward is for idle. { forward :  -35.67, right : -19.74, None : 1.74, left : -39.67}</p>
+When the light is red, and we have to take a right turn, we can do so if theres no car coming from the left. - In the learned file we see that right_red_None_None_None (Waypoint is right, and there is no car coming from the left) the reward for right is maximum { forward : -9.63, right : 1.93, None : 1.50, left : -10.01}. But, if there is a car coming front from the left, it is best to stay idle, as any other action will cause accident. We see that for right_red_forward_None_None (Waypoint is right, and there is a car coming straight from the left) the max reward is for idle. { forward :  -39.81, right : -18.66, None : 1.97, left : -39.55}</p>
 <p><br/>
 Examples of optimal policy that was not learnt:<br/> 
-When the light is green and theres no oncoming traffic we can turn left. Here it should turn left in the state left_green_None_None_None. But instead it learned to move right {forward : 0.33, right : 0.85, None : -3.55, left : -2.78) I suspect that the system mis-learnt this as the learning rate was too high. (But on the other hand, it should never have gotten a negative reward for the action to turn left in this case).</p>
+When the light is green and theres no oncoming traffic we can turn left. Here it should turn left in the state left_green_None_None_None. But instead it learned to move right {forward : 0.18, right :0.74, None :-3.14, left : -2.73) I suspect that the system mis-learnt this as the learning rate was too high. (But on the other hand, it should never have gotten a negative reward for the action to turn left in this case. This is one of the reasons the reliability was low).</p>
 
 </div>
 </div>
