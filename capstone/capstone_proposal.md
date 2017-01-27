@@ -9,11 +9,11 @@ January 27th, 2017
 The world around us contains different types of things (e.g. people, places, objects, ideas, etc.). Predominantly, these things are defined by their attributes like shape, color, etc. These things are also defined by the "roles" that they play in their relationships with other things. For example, Washington D.C. is a place and U.S.A is a country. But they have a relationship of Washington D.C. being the capital of USA, which adds extra meaning to Washington D.C. This same role is played by Paris for France. 
 
 I want to investigate machine learning on semantic data like attributes and relationships of things. Many domains use grahps to represent their information because nodes, properties and edges of graphs are very well suited to describe the attributes and relationships of things in the domain. For example:
-a) Spoken systems, the output of Natural Language Processing is a parse tree [https://en.wikipedia.org/wiki/Parse_tree] 
-b) Social networks are graphs.
-c) High level semantic information in images are graphs of arrangements of things [https://arxiv.org/pdf/1405.0312.pdf] 
-d) The arrangement of objects on the road for autonomous driving is a graph.
-e) The browsing data of prodiucts, usage graphs, etc. is a graph (e.g. browing products, plan of actions, etc.)
+1. Spoken systems, the output of Natural Language Processing is a parse tree [https://en.wikipedia.org/wiki/Parse_tree] 
+2. Social networks are graphs.
+3. High level semantic information in images are graphs of arrangements of things [https://arxiv.org/pdf/1405.0312.pdf] 
+4. The arrangement of objects on the road for autonomous driving is a graph.
+5. The browsing data of prodiucts, usage graphs, etc. is a graph (e.g. browing products, plan of actions, etc.)
 
 In the classic sense, Machine Learning focuses on specific kinds of understanding - classification, clustering, regression, etc. [2] The algorightims in these deal with feature vectors (e.g. the features used for classification, etc.) and are aimed at essentially discriminating between different types of input to produce some output. To make decisions based on the state of the world an A.I. Agent can read from the world using sensors etc., can easily perform a classification task once it learns the relation between the data to its output decision. For the most part, the feature vectors used in such cases as input encode the attributes of the things, BUT not necessarily the relationships between things. And while the designer of the inputs and outputs of the algorithms may manually craft features to represent some of these relationships, the Agent has no automatic way of comprehending and using these relationships.
 
