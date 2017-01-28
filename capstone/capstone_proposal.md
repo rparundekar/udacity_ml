@@ -8,20 +8,24 @@ January 27th, 2017
 ### Domain Background
 The world around us contains different types of things (e.g. people, places, objects, ideas, etc.). Predominantly, these things are defined by their attributes like shape, color, etc. These things are also defined by the "roles" that they play in their relationships with other things. For example, Washington D.C. is a place and U.S.A is a country. But they have a relationship of Washington D.C. being the capital of USA, which adds extra meaning to Washington D.C. This same role is played by Paris for France. 
 
-The field of [Knowledge Representation and Reasoning](https://en.wikipedia.org/wiki/Knowledge_representation_and_reasoning) within Artificial Intelligence deals with representing these things, types, attributes and relationships using symbols and enabling the agent to reason about them. Another convergence that has come about in this field of knowledge representation and data science is Graph databases since both fields can use graphs with nodes and edges to represent data.
+The field of [Knowledge Representation and Reasoning](https://en.wikipedia.org/wiki/Knowledge_representation_and_reasoning) within Artificial Intelligence deals with representing these things, types, attributes and relationships using symbols and enabling the agent to reason about them. As it happens, a convergence has come about in this field of knowledge representation from the Databases domain - Graph databases can use graphs with nodes and edges to represent data much similar to the knowledge graphs.
 
-Many domains use grahps to represent their information because nodes, properties and edges of graphs are very well suited to describe the attributes and relationships of things in the domain. 
+Many domains use semantic grahps to represent their information because nodes, properties and edges of graphs are very well suited to describe the attributes and relationships of things in the domain. 
 
 For example:
-1. Spoken systems, the output of Natural Language Processing is a [parse tree](https://en.wikipedia.org/wiki/Parse_tree).
+1. Spoken systems - the output of Natural Language Processing is a [parse tree](https://en.wikipedia.org/wiki/Parse_tree).
+
 2. Social networks are graphs.
+
 3. High level semantic information in [images](https://arxiv.org/pdf/1405.0312.pdf) are graphs of arrangements of things. 
+
 4. The arrangement of objects on the road for autonomous driving is a graph.
+
 5. A user's browsing pattern of products, usage graphs, etc. is a graph (e.g. browing products, plan of actions, etc.).
 
 In the classic sense, [Machine Learning](https://en.wikipedia.org/wiki/Machine_learning) focuses on specific kinds of understanding - classification, clustering, regression, etc. The algorightims in these deal with feature vectors (e.g. the features used for classification, etc.) and are aimed at essentially discriminating between different types of input to produce some output. To make decisions based on the state of the world an A.I. Agent can read from the world using sensors etc., can easily perform a classification task once it learns the relation between the data to its output decision. For the most part, the feature vectors used in such cases as input encode the attributes of the things, BUT not necessarily the relationships between things. And while the designer of the inputs and outputs of the algorithms may manually craft features to represent some of these relationships, the Agent has no automatic way of comprehending and using these relationships.
 
-Can we use machine learning to make Agents better understand Things, including their attributes AND their relationships?. If we are able to inspect the attributes and relationships of the things together and infer their roles, find its types, etc. our agent can act on those. If an Agent is able to classify things by understanding its semantic relationships, we could in the future generalize it to an Agent that can act on the meaning of the things. 
+Can we use machine learning to make Agents better understand Things, including their attributes AND their relationships? If we are able to inspect the attributes and relationships of the things together and infer their roles, find its types, etc. our agent can act on those. If an Agent is able to classify things by understanding its semantic relationships, we could in the future generalize it to an Agent that can act on the meaning of the things. 
 
 Existing research in this domain:
 ..- [Ontology alignment](https://en.wikipedia.org/wiki/Ontology_alignment) is a field of study that researches on understanding the classes of things by aligning types from one data source to the types defined in another source to increase interoperability. In my previous work on aligning ontologies, we employed a brute force method to discover new classes to describe things using 'Restriction Classes' defined by restricting the properties to their values and creating a set of instances to match that restriction. This and other [instance based methods](https://hal.archives-ouvertes.fr/file/index/docid/917910/filename/shvaiko2013a.pdf) can be used to understand things by either creating new class definitions or aligning the definition of things to other classes.
@@ -58,15 +62,25 @@ For the first part, the ontology alignment approach will align the classes (type
 For the second part, we qualitatively compare the set of instances in the classes in the ground truth with the false negative and false positive instances that we predict. This gives us insight into how different algorithms work.
 
 ### Project Design
-_(approx. 1 page)_
+The workflow of the capstone approach is as follows:
+a) We first extract the data from DBpedia dataset and create the graph classification data -  The data from DBpedia is in Semantic Web formats (e.g. RDF) we need to translate that to a simpler graph format that we can store in a database. We will use the "Type", "InfoBox properties" and "Categories" datasets. For example Neo4J is a graph that can be used to store the whole data about the instances as a single graph. 
 
-In this final section, summarize a theoretical workflow for approaching a solution given the problem. Provide thorough discussion for what strategies you may consider employing, what analysis of the data might be required before being used, or which algorithms will be considered for your implementation. The workflow and discussion that you provide should align with the qualities of the previous sections. Additionally, you are encouraged to include small visualizations, pseudocode, or diagrams to aid in describing the project design, but it is not required. The discussion should clearly outline your intended workflow of the capstone project.
+b) We also track the identifiers of the things that have types and categories as our ground truth. We can then split this list of instances into training, testing and validation datasets.
 
+c) Before we create the data for learning, we need to do some pre-processing by analying the nature of the data: for example, properties with numeric values might need to be discretized, we need to understand the coverage of the classes (as the counts will not be equal), some properties might not be useful for classification (e.g. metadata like author name, etc.)
 
-**Before submitting your proposal, ask yourself. . .**
+d) We then model our classification problem as a multi-label classification and make the data ready for machine learning- To create the data that we can use for learning, we iterate over the list of things to create the features using graph kernel methods. We then have a typical classification data - features (extracted from e.g. random walks) and classes - the types or the categories. 
 
-- Does the proposal you have written follow a well-organized structure similar to that of the project template?
-- Is each section (particularly **Solution Statement** and **Project Design**) written in a clear, concise and specific fashion? Are there any ambiguous terms or phrases that need clarification?
-- Would the intended audience of your project be able to understand your proposal?
-- Have you properly proofread your proposal to assure there are minimal grammatical and spelling mistakes?
-- Are all the resources used for this project correctly cited and referenced?
+e) First we will investigate type classification. Then, we will investigate category classification. The target multi-lable vector can represent 1 or 0 depending whether the thing belongs to that type or category (one class can belong to multiple types e.g. all classes in its hierarchy of types)
+
+f) While doing this, we can vary 3 things:
+..- We can vary the graph kernal methods - e.g. with random walks, we can change the length of the random walk, the probabilities with which we take the node or edge in the walk, the neighborhood, etc. 
+..- We can vary the length of the walks to extract as features.
+..- We can also vary the classification method - e.g. we can use deep learning, [one-vs-rest clasifiers](http://scikit-learn.org/stable/modules/multiclass.html#multilabel-learning), etc. 
+We can create a comparison of the different combinations used and finally pick one approach that looks best suited for this type of classification.
+
+g) We then use this final approach to do both type and category prediction and calculate the metrics. 
+
+h) For our benchmark model, we use the restriction classes approach to create our brute force benchmark. 
+
+i) Finally we compare the results of our classification approach and the benchmark, using quantitative and qualitative analysis as described in the Metrics section.
