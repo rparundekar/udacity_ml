@@ -13,6 +13,7 @@ The field of [Knowledge Representation and Reasoning](https://en.wikipedia.org/w
 Many domains use semantic grahps to represent their information because nodes, properties and edges of graphs are very well suited to describe the attributes and relationships of things in the domain. 
 
 For example:
+
 1. Spoken systems - the output of Natural Language Processing is a [parse tree](https://en.wikipedia.org/wiki/Parse_tree).
 
 2. Social networks are graphs.
@@ -28,9 +29,12 @@ In the classic sense, [Machine Learning](https://en.wikipedia.org/wiki/Machine_l
 Can we use machine learning to make Agents better understand Things, including their attributes AND their relationships? If we are able to inspect the attributes and relationships of the things together and infer their roles, find its types, etc. our agent can act on those. If an Agent is able to classify things by understanding its semantic relationships, we could in the future generalize it to an Agent that can act on the meaning of the things. 
 
 Existing research in this domain:
-..- [Ontology alignment](https://en.wikipedia.org/wiki/Ontology_alignment) is a field of study that researches on understanding the classes of things by aligning types from one data source to the types defined in another source to increase interoperability. In my previous work on aligning ontologies, we employed a brute force method to discover new classes to describe things using 'Restriction Classes' defined by restricting the properties to their values and creating a set of instances to match that restriction. This and other [instance based methods](https://hal.archives-ouvertes.fr/file/index/docid/917910/filename/shvaiko2013a.pdf) can be used to understand things by either creating new class definitions or aligning the definition of things to other classes.
-..- [Graph based classification](https://pdfs.semanticscholar.org/b430/6178fb343b4c6e66e64d101606b04f4b5a22.pdf) methods have been used in toxicology detection. 
-..- [Text categorization using graph classification](http://frncsrss.github.io/papers/rousseau-acl2015.pdf) is also investigated.
+
+- [Ontology alignment](https://en.wikipedia.org/wiki/Ontology_alignment) is a field of study that researches on understanding the classes of things by aligning types from one data source to the types defined in another source to increase interoperability. In my previous work on aligning ontologies, we employed a brute force method to discover new classes to describe things using 'Restriction Classes' defined by restricting the properties to their values and creating a set of instances to match that restriction. This and other [instance based methods](https://hal.archives-ouvertes.fr/file/index/docid/917910/filename/shvaiko2013a.pdf) can be used to understand things by either creating new class definitions or aligning the definition of things to other classes.
+
+- [Graph based classification](https://pdfs.semanticscholar.org/b430/6178fb343b4c6e66e64d101606b04f4b5a22.pdf) methods have been used in toxicology detection. 
+
+- [Text categorization using graph classification](http://frncsrss.github.io/papers/rousseau-acl2015.pdf) is also investigated.
 
 We pick one of these problems as a candidate for exploring the use of Machine Learning to understand semantic data. 
 
@@ -63,6 +67,7 @@ For the second part, we qualitatively compare the set of instances in the classe
 
 ### Project Design
 The workflow of the capstone approach is as follows:
+
 a) We first extract the data from DBpedia dataset and create the graph classification data -  The data from DBpedia is in Semantic Web formats (e.g. RDF) we need to translate that to a simpler graph format that we can store in a database. We will use the "Type", "InfoBox properties" and "Categories" datasets. For example Neo4J is a graph that can be used to store the whole data about the instances as a single graph. 
 
 b) We also track the identifiers of the things that have types and categories as our ground truth. We can then split this list of instances into training, testing and validation datasets.
@@ -74,9 +79,13 @@ d) We then model our classification problem as a multi-label classification and 
 e) First we will investigate type classification. Then, we will investigate category classification. The target multi-lable vector can represent 1 or 0 depending whether the thing belongs to that type or category (one class can belong to multiple types e.g. all classes in its hierarchy of types)
 
 f) While doing this, we can vary 3 things:
-..- We can vary the graph kernal methods - e.g. with random walks, we can change the length of the random walk, the probabilities with which we take the node or edge in the walk, the neighborhood, etc. 
-..- We can vary the length of the walks to extract as features.
-..- We can also vary the classification method - e.g. we can use deep learning, [one-vs-rest clasifiers](http://scikit-learn.org/stable/modules/multiclass.html#multilabel-learning), etc. 
+
+- We can vary the graph kernal methods - e.g. with random walks, we can change the length of the random walk, the probabilities with which we take the node or edge in the walk, the neighborhood, etc. 
+
+- We can vary the length of the walks to extract as features.
+
+- We can also vary the classification method - e.g. we can use deep learning, [one-vs-rest clasifiers](http://scikit-learn.org/stable/modules/multiclass.html#multilabel-learning), etc. 
+
 We can create a comparison of the different combinations used and finally pick one approach that looks best suited for this type of classification.
 
 g) We then use this final approach to do both type and category prediction and calculate the metrics. 
