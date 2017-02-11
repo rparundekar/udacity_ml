@@ -267,7 +267,7 @@ from keras.models import Model
 from keras.layers import Dense, Activation, Reshape, AveragePooling2D, MaxPooling2D, Input, Flatten, merge, Convolution2D, Dropout, LocallyConnected2D
 from keras.regularizers import l2
 from keras.layers.normalization import BatchNormalization
-
+from keras.layers.advanced_activations import PReLU
 
 inputSize=imgSize*imgSize
 num_labels=5
@@ -277,89 +277,100 @@ def getCnnModel():
     x = Input(batch_shape=(None, imgSize, imgSize,1))
 
     conv = Convolution2D(48, 5, 5,border_mode='same', W_regularizer=l2(0.01))(x)
-    conv = Activation('relu')(conv)
+    conv = PReLU()(conv)
     conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+    conv = Dropout(0.5)(conv)
 
     conv = Convolution2D(64, 5,5,border_mode='same', W_regularizer=l2(0.01))(conv)
-    conv = Activation('relu')(conv)
+    conv = PReLU()(conv)
+    #conv = Activation('relu')(conv)
     conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+    conv = Dropout(0.5)(conv)
 
     conv = Convolution2D(128, 5,5, border_mode='same', W_regularizer=l2(0.01))(conv)
-    conv = Activation('relu')(conv)
+    conv = PReLU()(conv)
+    #conv = Activation('relu')(conv)
     conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+    conv = Dropout(0.5)(conv)
 
     conv = Convolution2D(160,5,5, border_mode='same', W_regularizer=l2(0.01))(conv)
-    conv = Activation('relu')(conv)
+    conv = PReLU()(conv)
+    #conv = Activation('relu')(conv)
     conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+    conv = Dropout(0.5)(conv)
 
     conv = Convolution2D(192,5,5, border_mode='same', W_regularizer=l2(0.01))(conv)
-    conv = Activation('relu')(conv)
+    #conv = Activation('relu')(conv)
+    conv = PReLU()(conv)
     conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+    conv = Dropout(0.5)(conv)
 
     conv = Convolution2D(192,5,5, border_mode='same', W_regularizer=l2(0.01))(conv)
-    conv = Activation('relu')(conv)
+    #conv = Activation('relu')(conv)
+    conv = PReLU()(conv)
     conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+    conv = Dropout(0.5)(conv)
 
     conv = Convolution2D(192,5,5,border_mode='same', W_regularizer=l2(0.01))(conv)
-    conv = Activation('relu')(conv)
+    #conv = Activation('relu')(conv)
+    conv = PReLU()(conv)
     conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+    conv = Dropout(0.5)(conv)
 
     conv = Convolution2D(192,5,5,border_mode='same', W_regularizer=l2(0.01))(conv)
-    conv = Activation('relu')(conv)
+    #conv = Activation('relu')(conv)
+    conv = PReLU()(conv)
     conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+    conv = Dropout(0.5)(conv)
 
-    conv = Convolution2D(192,5,5, border_mode='same', W_regularizer=l2(0.01))(conv)
+    conv = Convolution2D(192,5,5, W_regularizer=l2(0.01), border_mode='same')(conv)
+    conv = PReLU()(conv)
     conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
-    conv = Activation('relu')(conv)
+    #conv = Activation('relu')(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+    conv = Dropout(0.5)(conv)
 
     flat = Flatten()(conv)
 
-    dense = Dense(3072 ,W_regularizer=l2(0.01))(flat)
-    dense = Activation('relu')(dense)
+    dense = Dense(3072, W_regularizer=l2(0.01))(flat)
+    #dense = Activation('relu')(dense)
+    dense = PReLU()(dense)
     dense = BatchNormalization()(dense)
-    dense = Dropout(0.4)(dense)
+    dense = Dropout(0.5)(dense)
     dense = Dense(3072, W_regularizer=l2(0.01))(dense)
-    dense = Activation('relu')(dense)
+    dense = PReLU()(dense)
+    #dense = Activation('relu')(dense)
     dense = BatchNormalization()(dense)
-    dense = Dropout(0.4)(dense)
+    dense = Dropout(0.5)(dense)
     dense = Dense(3074, W_regularizer=l2(0.01))(dense)
-    dense = Activation('relu')(dense)
+    dense = PReLU()(dense)
+    #dense = Activation('relu')(dense)
     dense = BatchNormalization()(dense)
-    dense = Dropout(0.4)(dense)
+    dense = Dropout(0.5)(dense)
     outL = Dense(5, W_regularizer=l2(0.01))(dense)
     outL = Activation('softmax', name="Length")(outL)
 
-    merged = merge([outL, dense], mode='concat')
+    #merged = merge([outL, dense], mode='concat')
     #merged = Dense(1024, W_regularizer=l2(0.01))(merged)
     #merged = Activation('relu')(merged)
 
-    outD0 = Dense(11,W_regularizer=l2(0.01))(merged)
+    outD0 = Dense(11, W_regularizer=l2(0.01))(dense)
     outD0 = Activation('softmax', name="Digit0")(outD0)
-    outD1 = Dense(11, W_regularizer=l2(0.01))(merged)
+    outD1 = Dense(11, W_regularizer=l2(0.01))(dense)
     outD1 = Activation('softmax', name="Digit1")(outD1)
-    outD2 = Dense(11,W_regularizer=l2(0.01))(merged)
+    outD2 = Dense(11, W_regularizer=l2(0.01))(dense)
     outD2 = Activation('softmax', name="Digit2")(outD2)
-    outD3 = Dense(11, W_regularizer=l2(0.01))(merged)
+    outD3 = Dense(11, W_regularizer=l2(0.01))(dense)
     outD3 = Activation('softmax', name="Digit3")(outD3)
-    outD4 = Dense(11,W_regularizer=l2(0.01))(merged)
+    outD4 = Dense(11, W_regularizer=l2(0.01))(dense)
     outD4 = Activation('softmax', name="Digit4")(outD4)
     model = Model(input=x, output=[outL, outD0, outD1, outD2, outD3, outD4])
     return model
@@ -536,14 +547,14 @@ def strongLengthBias():
 
 import os.path
 if os.path.isfile('actualModel.h5') is False:
-    epochs=100
+    epochs=40
 
     #model = strongLengthBias()
     model = getCnnModel()
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adagrad',
-                  metrics=['accuracy'], loss_weights=[1.5,1.,1.,1.,0.4,0.4])
+                  metrics=['accuracy'])#, loss_weights=[1.5,1.,1.,1.,0.4,0.4])
 
     trainDigit0  = trainImageDigits[:,0,:]
     trainDigit1  = trainImageDigits[:,1,:]
