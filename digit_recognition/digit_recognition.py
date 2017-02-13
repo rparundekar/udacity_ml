@@ -287,49 +287,49 @@ def getCnnModel():
     #conv = Activation('relu')(conv)
     conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+#    conv = Dropout(0.4)(conv)
 
     conv = Convolution2D(128, 5,5, border_mode='same', W_regularizer=l2(0.01))(conv)
     conv = PReLU()(conv)
     #conv = Activation('relu')(conv)
     conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+#    conv = Dropout(0.4)(conv)
 
     conv = Convolution2D(160,5,5, border_mode='same', W_regularizer=l2(0.01))(conv)
     conv = PReLU()(conv)
     #conv = Activation('relu')(conv)
     conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+#    conv = Dropout(0.4)(conv)
 
     conv = Convolution2D(192,5,5, border_mode='same', W_regularizer=l2(0.01))(conv)
     #conv = Activation('relu')(conv)
     conv = PReLU()(conv)
     conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+#    conv = Dropout(0.4)(conv)
 
     conv = Convolution2D(192,5,5, border_mode='same', W_regularizer=l2(0.01))(conv)
     #conv = Activation('relu')(conv)
     conv = PReLU()(conv)
     conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+#    conv = Dropout(0.4)(conv)
 
     conv = Convolution2D(192,5,5,border_mode='same', W_regularizer=l2(0.01))(conv)
     #conv = Activation('relu')(conv)
     conv = PReLU()(conv)
     conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+#    conv = Dropout(0.4)(conv)
 
     conv = Convolution2D(192,5,5,border_mode='same', W_regularizer=l2(0.01))(conv)
     #conv = Activation('relu')(conv)
     conv = PReLU()(conv)
     conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
     conv = BatchNormalization()(conv)
-    conv = Dropout(0.4)(conv)
+#    conv = Dropout(0.4)(conv)
 
  #   conv = Convolution2D(192,5,5, W_regularizer=l2(0.01), border_mode='same')(conv)
  #   conv = PReLU()(conv)
@@ -344,17 +344,17 @@ def getCnnModel():
     #dense = Activation('relu')(dense)
     dense = PReLU()(dense)
     dense = BatchNormalization()(dense)
-    dense = Dropout(0.4)(dense)
+#    dense = Dropout(0.4)(dense)
     dense = Dense(3072, W_regularizer=l2(0.01))(dense)
     dense = PReLU()(dense)
     #dense = Activation('relu')(dense)
     dense = BatchNormalization()(dense)
-    dense = Dropout(0.4)(dense)
+#    dense = Dropout(0.4)(dense)
     dense = Dense(3074, W_regularizer=l2(0.01))(dense)
     dense = PReLU()(dense)
     #dense = Activation('relu')(dense)
     dense = BatchNormalization()(dense)
-    dense = Dropout(0.5)(dense)
+#    dense = Dropout(0.5)(dense)
     outL = Dense(5, W_regularizer=l2(0.01))(dense)
     outL = Activation('softmax', name="Length")(outL)
 
@@ -553,8 +553,8 @@ if os.path.isfile('actualModel.h5') is False:
     model = getCnnModel()
 
     model.compile(loss='mse',
-                  optimizer='adagrad',
-                  metrics=['accuracy'])#, loss_weights=[1.5,1.,1.,1.,0.4,0.4])
+                  optimizer='sgd',
+                  metrics=['accuracy'], loss_weights=[1.5,1.,1.,1.,0.4,0.4])
 
     trainDigit0  = trainImageDigits[:,0,:]
     trainDigit1  = trainImageDigits[:,1,:]
