@@ -317,18 +317,18 @@ def getCnnModel():
     conv = BatchNormalization()(conv)
 #    conv = Dropout(0.4)(conv)
 
-    conv = Convolution2D(192,5,5,border_mode='same', W_regularizer=l2(0.01))(conv)
-    #conv = Activation('relu')(conv)
-    conv = PReLU()(conv)
-    conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
-    conv = BatchNormalization()(conv)
+#    conv = Convolution2D(192,5,5,border_mode='same', W_regularizer=l2(0.01))(conv)
+#    #conv = Activation('relu')(conv)
+#    conv = PReLU()(conv)
+#    conv = MaxPooling2D(pool_size = (2,2), strides=(1,1))(conv)
+#    conv = BatchNormalization()(conv)
 #    conv = Dropout(0.4)(conv)
 
-    conv = Convolution2D(192,5,5,border_mode='same', W_regularizer=l2(0.01))(conv)
-    #conv = Activation('relu')(conv)
-    conv = PReLU()(conv)
-    conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
-    conv = BatchNormalization()(conv)
+#    conv = Convolution2D(192,5,5,border_mode='same', W_regularizer=l2(0.01))(conv)
+#    #conv = Activation('relu')(conv)
+#    conv = PReLU()(conv)
+#    conv = AveragePooling2D(pool_size = (2,2), strides=(2,2))(conv)
+#    conv = BatchNormalization()(conv)
 #    conv = Dropout(0.4)(conv)
 
  #   conv = Convolution2D(192,5,5, W_regularizer=l2(0.01), border_mode='same')(conv)
@@ -358,7 +358,7 @@ def getCnnModel():
     outL = Dense(5, W_regularizer=l2(0.01))(dense)
     outL = Activation('softmax', name="Length")(outL)
 
-    #merged = merge([outL, dense], mode='concat')
+    dense = merge([outL, dense], mode='concat')
     #merged = Dense(1024, W_regularizer=l2(0.01))(merged)
     #merged = Activation('relu')(merged)
 
@@ -547,13 +547,13 @@ def strongLengthBias():
 
 import os.path
 if os.path.isfile('actualModel.h5') is False:
-    epochs=40
+    epochs=100
 
     #model = strongLengthBias()
     model = getCnnModel()
 
-    model.compile(loss='mse',
-                  optimizer='sgd',
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adagrad',
                   metrics=['accuracy'], loss_weights=[1.5,1.,1.,1.,0.4,0.4])
 
     trainDigit0  = trainImageDigits[:,0,:]
