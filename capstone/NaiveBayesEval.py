@@ -4,7 +4,7 @@ print("Reading Header Y")
 headerY=pd.read_csv('/Users/rparundekar/dataspace/dbpedia2016/headerY.csv')
 
 import numpy as np
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import confusion_matrix
 
 #Folder for the dataset
@@ -30,7 +30,7 @@ for index, row in headerY.iterrows():
         continue
     print("Learning for " + classId )
     #Initialize the classifier
-    classifier = MultinomialNB()
+    classifier = GaussianNB()
     for trainIndex in range(0,splitIndex):
         print('Reading X for file datasetX_{}.csv'.format(listOfFiles[trainIndex]))
         dataX=pd.read_csv(datasetFolder + 'datasetX_{}'.format(listOfFiles[trainIndex]) + '.csv')
@@ -43,22 +43,22 @@ for index, row in headerY.iterrows():
 
         y_train_this=dataY[classY]
         print('Updating model')
-        classifier.partial_fit(dataX, y_train_this, classes=np.unique(y_train_this))
+        classifier.partial_fit(dataX, y_train_this, classes=np.array([0,1]))
     
     currentConfusionMatrix = [[0,0], [0,0]]
     print("Testing for " + classId)
     for testIndex in range(splitIndex,numberOfFiles):
-        print("Reading X " + listOfFiles[testIndex])
-        dataX=pd.read_csv(datasetFolder + 'datasetX_' + listOfFiles[testIndex] + '.csv')
+        print('Reading X for file datasetX_{}.csv'.format(listOfFiles[trainIndex]) )
+        dataX=pd.read_csv(datasetFolder + 'datasetX_{}'.format(listOfFiles[trainIndex]) + '.csv')
         
-        print("Reading Y" + listOfFiles[testIndex])
-        dataY=pd.read_csv(datasetFolder + 'datasetY_' + listOfFiles[testIndex] + '.csv')
+        print('Reading Y for file datasetY_{}.csv'.format(listOfFiles[trainIndex]))
+        dataY=pd.read_csv(datasetFolder + 'datasetY_{}'.format(listOfFiles[trainIndex])  + '.csv')
         
         del dataX['id']
         del dataY['id']
 
         y_test_this=dataY[classY]
-        print('Predicting Y')
+        print('Predicting Y' )
         y_pred = clf.predict(dataX)
         currentConfusionMatrix = currentConfusionMatrix + confusion_matrix(y_test_this, y_pred)
     
