@@ -11,7 +11,7 @@ from sklearn.metrics import confusion_matrix
 #Folder for the dataset
 datasetFolder = '/Users/rparundekar/dataspace/dbpedia2016/dataset/'
 #Number of files
-numberOfFiles = 52
+numberOfFiles = 256
 #Test split
 testSplit=0.25
 
@@ -33,33 +33,33 @@ for index, row in headerY.iterrows():
     #Initialize the classifier
     classifier = linear_model.SGDClassifier()#GaussianNB()
     for trainIndex in range(0,splitIndex):
-        print('Reading X for file datasetX_{}.csv'.format(listOfFiles[trainIndex]))
+        #print('Reading X for file datasetX_{}.csv'.format(listOfFiles[trainIndex]))
         dataX=pd.read_csv(datasetFolder + 'datasetX_{}'.format(listOfFiles[trainIndex]) + '.csv')
         
-        print('Reading Y for file datasetY_{}.csv'.format(listOfFiles[trainIndex]))
+        #print('Reading Y for file datasetY_{}.csv'.format(listOfFiles[trainIndex]))
         dataY=pd.read_csv(datasetFolder + 'datasetY_{}'.format(listOfFiles[trainIndex])  + '.csv')
         
         del dataX['id']
         del dataY['id']
 
         y_train_this=dataY[classY]
-        print('Updating model')
+        #print('Updating model')
         classifier.partial_fit(dataX, y_train_this, classes=np.array([0,1]))
     
     currentConfusionMatrix = [[0,0], [0,0]]
     print("Testing for " + classId)
     for testIndex in range(splitIndex,numberOfFiles):
-        print('Reading X for file datasetX_{}.csv'.format(listOfFiles[testIndex]) )
+        #print('Reading X for file datasetX_{}.csv'.format(listOfFiles[testIndex]) )
         dataX=pd.read_csv(datasetFolder + 'datasetX_{}'.format(listOfFiles[testIndex]) + '.csv')
         
-        print('Reading Y for file datasetY_{}.csv'.format(listOfFiles[testIndex]))
+        #print('Reading Y for file datasetY_{}.csv'.format(listOfFiles[testIndex]))
         dataY=pd.read_csv(datasetFolder + 'datasetY_{}'.format(listOfFiles[testIndex])  + '.csv')
         
         del dataX['id']
         del dataY['id']
 
         y_test_this=dataY[classY]
-        print('Predicting Y' )
+        #print('Predicting Y' )
         y_pred = classifier.predict(dataX)
         currentConfusionMatrix = currentConfusionMatrix + confusion_matrix(y_test_this, y_pred)
     
