@@ -77,94 +77,95 @@ contain at least 70 and at most 150 words. It should be written using the
 \keywords{Ontology, Semantic Web, Graph Kernels, Graph Classification, Deep Learning}
 \end{abstract}
 
-
-\section{Introduction}
+\section{Definition}
+\subsection{Project Overview}
 The world around us contains different types of things (e.g. people, places,
 objects, ideas, etc.). Predominantly, these things are defined by their attributes
-like shape, color, etc. These things are also defined by the ``roles” that they
-play in their relationships with other things. For example, Washington D.C. is a
+like shape, color, etc. These things are also defined by their relationships with 
+other things. For example, Washington D.C. is a
 place and U.S.A is a country. But they have a relationship of Washington D.C.
-being the capital of USA, which adds extra meaning to Washington D.C. This
+being the capital of U.S.A., which adds extra meaning to Washington D.C. This
 same role is played by Paris for France.
 
-The field of Knowledge Representation and Reasoning within Artificial Intelligence
-deals with representing these things, types, attributes and relationships
-using symbols and enabling the agent to reason about them. As it happens, a
-convergence has come about in this field of knowledge representation from the
-Databases domain - Graph databases can use graphs with nodes and edges to
-represent data much similar to the knowledge graphs.
-
-Many domains use semantic grahps to represent their information because nodes,
-properties and edges of graphs are very well suited to describe the attributes
-and relationships of things in the domain. For example:
+The Semantic Web is defined as ``an extension of the current Web in which
+information is given well-defined meaning, better enabling computers and people to
+work in cooperation"\cite{berners2001semantic}. 
+It is an extention of the Knowledge Representation and Reasoning topic within Artificial Intelligence 
+and deals with representing these things, their types, their attributes and their relationships
+using symbols and enabling the agent to reason about them. 
+A common data structure used for the representation is graphs. In these semantic graphs the nodes,
+properties, and edges of graphs are very well suited to describe the things, their attributes,
+and their relationships of things in the domain. A few example domais where such graphs are used are:
 \begin{itemize}
+\item Linked Data - The web-scale semantic data graph that is part of the Semantic Web\cite{heath2011linked}.
 \item Spoken systems - the output of Natural Language Processing is a parse
-tree.
-\item Social networks are graphs.
-\item High level semantic information in images are graphs of arrangements of
-things.
-\item The arrangement of objects on the road for autonomous driving is a graph.
-\item A user’s browsing pattern of products, usage graphs, etc. is a graph (e.g. browing products, plan of actions, etc.).
+tree \cite{socher2011parsing}.
+\item Social networks are graphs \cite{backstrom2011supervised}.
+\item Scene recognition - High level semantic information in images are graphs of arrangements of
+things can be a graph \cite{socher2011parsing}.
+\item Virtual \& Augmented Reality environments can be represented as a semantic graphs \cite{lugrin2007making}.
 \end{itemize}
 
-In the classic sense, Machine Learning focuses on specific kinds of understanding
-- classification, clustering, regression, etc. The algorightims in these deal with
-feature vectors (e.g. the features used for classification, etc.) and are aimed
-at essentially discriminating between different types of input to produce some
-output. To make decisions based on the state of the world an A.I. Agent can
-read from the world using sensors etc., can easily perform a classification task
-once it learns the relation between the data to its output decision. For the most
-part, the feature vectors used in such cases as input encode the attributes of
-the things, BUT not necessarily the relationships between things. And while
-the designer of the inputs and outputs of the algorithms may manually craft
-features to represent some of these relationships, the Agent has no automatic
-way of comprehending and using these relationships.
-
-Can we use machine learning to make Agents better understand Things, including
-their attributes AND their relationships? If we are able to inspect the attributes
-and relationships of the things together and infer their roles, find its types, etc.
-our agent can act on those. If an Agent is able to classify things by understanding
-its semantic relationships, we could in the future generalize it to an Agent that
-can act on the meaning of the things.
-
-\subsection{Dataset}
-An Ontology is a formalism used to represent semantic data about \textit{things}. It specifies the facts
-about the \textit{things'} attributes and their relationships that the Agent believes to
-be true. DBpedia\footnote{http://wiki.dbpedia.org/} is one such Ontology whose 
-goal is to create a knowledge repository of general knowledge about the world 
-such that Agents can have a grounding of the popular concepts and entities and 
-their relationships. DBpedia datasets contains structured information extracted 
+\subsubsection{Dataset:}
+We use DBpedia\footnote{http://wiki.dbpedia.org/} as an exemplary dataset 
+as a starting point to study Semantic Graph Classification. DBpedia is a 
+large-scale knowledge base extracted from Wikipedia\cite{lehmann2015dbpedia}. 
+It contains structured information extracted 
 out of Wikipedia (e.g. page links, categories, infoboxes, etc.)\cite{dbpedia-swj}.
-
 The semantic data in DBpedia can be represented as a graph of nodes and edges.
 In this case, the nodes are \textit{things} (i.e. entities) and the edges are links/relationships between the
-\textit{things}. Each \textit{thing} has both a \textbf{type} and a \textbf{category} associated with it.
-Our goal is to try and estimate these values from the data about the \textit{thing}. 
-We model this as a classification problem. An agent looking at graphical data 
-can then use this classifier to identify the \textbf{type} or \textbf{category} of any \textit{thing} 
-that it sees for the first time and then perform possible action for that \textit{thing}. 
+\textit{things}. Each \textit{thing} has one or more \textbf{types} \& \textbf{categories} associated with it.
+The user community creating DBpedia maintains an Ontology\footnote{An Ontology is defined as a formal specification of the types, properties, and relationships of the entities that exist for a particular domain. In other words, it is the schema definition of the semantic data.} that specifies these types
+of each of the \textit{things}. 
 
-We use DBpedia as an exemplary dataset as a starting point to study Semantic Graph Classification. 
-This method could then be used in a variety of domains like the ones mentioned earlier. For example:
+We use the subset of DBpedia\footnote{http://wiki.dbpedia.org/downloads-2016-04}, which was generated from the March/April 2016 dump of Wikipedia. In this dataset, the \textit{things}, their attributes and 
+their relationships are extracted from the info-boxes (\texttt{infobox\_properties\_en.ttl}) using and the DBpedia Ontology (\texttt{dbpedia\_2016-04.owl}). We also use the types associated with the \textit{things}(\texttt{instance\_types\_en.ttl}) and the categories (\texttt{article\_categories\_en.ttl}) that they belong to.
+
+\subsubsection{Project Motivation:}
+The project is motivated by 
+our assumption that if an Agent is able to classify things by understanding
+its attributes and relationships into some types, we could in the future 
+generalize it to an Agent that can act on the meaning of the things. 
+Some examples applications for domains above are:
 \begin{itemize}
-\item Spoken systems - Have a dialog with the user based on the Natural Language Processing parse
-tree.
-\item Social networks - recommend interest groups to similar users.
-\item Semantic image understanding - situation awareness.
-\item Autonomous driving - perform the next driving action.
-\item Product browsing pattern - recommend ads.
+\item Linked Data - Agents can understand and automatically assist users at web scale \cite{berners2001semantic}.
+\item Spoken systems - Understanding user intent by Virtual Assistants like Siri, Alexa, etc. for home automation \cite{tang2017emergence}. 
+\item Predicting and Recommending links in Social Networks \cite{backstrom2011supervised}.
+\item Scene recognition - Urban scene understanding and its possible outdoor applications like understanding traffic, etc. \cite{cordts2015cityscapes}.
+\item Virtural Assistants like Mara \cite{schmeil2007mara} in Virtual \& Augmented Reality environments.
 \end{itemize}
 
-\subsection{Problem Statement}
-Given the semantic data about things (i.e. their attributes and relationships),
-can we identify their types (e.g. hierarchy of classes) or categories (e.g. roles it
-plays) interest?
-
+Our goal is to try and estimate the types and categories of the \textit{things} from their attributes and relationships. 
 For example, if you look at examples of categories in DBpedia, Achilies has been
 put into the categories - demigods, people of trojan war, characters in Illead, etc.
 What makes him part of those categories? Can we learn the definitions of these
-based on the attributes and relationships of Achilies?
+based on the attributes and relationships of Achilies? 
 
+\subsubsection{Other Approaches:}
+
+\subsection{Problem Statement}
+As mentioned earlier, the goal of this project is to apply Machine Learning 
+to classify the \textit{things} in DBpedia and identify their types and categories
+based on the semantic graph of 
+their attributes andtheir relationships. 
+To model this as a classification problem, we look at our algorithms
+available in Machine Learning. The classic algorithms in Machine Learning
+deal with feature vectors (e.g. the features used for classification, etc.) and are aimed
+at essentially discriminating between different inputs to those features to identify the target type/s. 
+
+%To make decisions based on the state of the world an A.I. Agent can
+%read from the world using sensors etc., can easily perform a classification task
+%once it learns the relation between the data to its output decision. For the most
+%part, the feature vectors used in such cases as input encode the attributes of
+%the things, BUT not necessarily the relationships between things. And while
+%the designer of the inputs and outputs of the algorithms may manually craft
+%features to represent some of these relationships, the Agent has no automatic
+%way of comprehending and using these relationships.
+\subsubsection{Graph Classification:}
+
+\subsubsection{Proposed Approach:}
+
+\subsubsection{Expected Result:}
 
 \section{Preprocessing}
 
@@ -172,3 +173,4 @@ based on the attributes and relationships of Achilies?
 \bibliographystyle{splncs}
 
 \end{document}
+s
