@@ -1,4 +1,3 @@
-
 %%%%%%%%%%%%%%%%%%%%%%% file typeinst.tex %%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % This is the LaTeX source for the instructions to authors using
@@ -17,12 +16,15 @@
 
 
 \documentclass[runningheads,a4paper]{llncs}
-
+\usepackage{amsmath}
 \usepackage{amssymb}
 \setcounter{tocdepth}{3}
 \usepackage{graphicx}
-
+\usepackage{listings}
+\usepackage{color}
 \usepackage{url}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.5}
 \urldef{\mailsa}\path|rparundekar@gmail.com|
 \newcommand{\myTitle}{Understanding `Things' using Semantic Graph Classification} 
 \newcommand{\myName}{Rahul Parundekar} 
@@ -38,7 +40,7 @@
 \title{Capstone Project: \myTitle}
 
 % a short form should be given in case it is too long for the running head
-%\titlerunning{Understanding DBpedia Using Graph Classification}
+\titlerunning{\myTitle}
 
 % the name(s) of the author(s) follow(s) next
 %
@@ -69,7 +71,6 @@ Machine Learning Nanodegree, Udacity\\
 \tocauthor{\myName}
 \maketitle
 
-
 \begin{abstract}
 The abstract should summarize the contents of the paper and should
 contain at least 70 and at most 150 words. It should be written using the
@@ -87,14 +88,12 @@ place and U.S.A is a country. But they have a relationship of Washington D.C.
 being the capital of U.S.A., which adds extra meaning to Washington D.C. This
 same role is played by Paris for France.
 
-The Semantic Web is defined as ``an extension of the current Web in which
+The Semantic Web is an extention of the Knowledge Representation and Reasoning topic within Artificial Intelligence that aims at representing such things and their attributes and relationship using symbols at web scale and enabling the agent to reason about them. 
+It is defined as ``an extension of the current Web in which
 information is given well-defined meaning, better enabling computers and people to
 work in cooperation"\cite{berners2001semantic}. 
-It is an extention of the Knowledge Representation and Reasoning topic within Artificial Intelligence 
-and deals with representing these things, their types, their attributes and their relationships
-using symbols and enabling the agent to reason about them. 
-A common data structure used for the representation is graphs. In these semantic graphs the nodes,
-properties, and edges of graphs are very well suited to describe the things, their attributes,
+A common data structure used for the representation of data in the Semantic Web is graphs. 
+In these semantic graphs the nodes, properties, and edges of graphs are very well suited to describe the things, their attributes,
 and their relationships of things in the domain. A few example domais where such graphs are used are:
 \begin{itemize}
 \item Linked Data - The web-scale semantic data graph that is part of the Semantic Web\cite{heath2011linked}.
@@ -106,7 +105,22 @@ things can be a graph \cite{socher2011parsing}.
 \item Virtual \& Augmented Reality environments can be represented as a semantic graphs \cite{lugrin2007making}.
 \end{itemize}
 
+\subsubsection{Project Motivation -  Type Identification in a Semantic Graph:}
+The project is motivated by 
+our assumption that if an Agent is able to classify things by understanding
+its attributes and relationships into semantic types, we could in the future 
+generalize it to an Agent that can act on the meaning of the things. 
+Some examples applications for domains above are:
+\begin{itemize}
+\item Linked Data - Agents can understand and automatically assist users at web scale \cite{berners2001semantic}.
+\item Spoken systems - Understanding user intent by Virtual Assistants like Siri, Alexa, etc. for home automation \cite{tang2017emergence}. 
+\item Predicting and Recommending links in Social Networks \cite{backstrom2011supervised}.
+\item Scene recognition - Urban scene understanding and its possible outdoor applications like understanding traffic, etc. \cite{cordts2015cityscapes}.
+\item Virtural Assistants like Mara \cite{schmeil2007mara} in Virtual \& Augmented Reality environments.
+\end{itemize}
+
 \subsubsection{Dataset:}
+\label{dataset}
 We use DBpedia\footnote{http://wiki.dbpedia.org/} as an exemplary dataset 
 as a starting point to study Semantic Graph Classification. DBpedia is a 
 large-scale knowledge base extracted from Wikipedia\cite{lehmann2015dbpedia}. 
@@ -118,22 +132,10 @@ In this case, the nodes are \textit{things} (i.e. entities) and the edges are li
 The user community creating DBpedia maintains an Ontology\footnote{An Ontology is defined as a formal specification of the types, properties, and relationships of the entities that exist for a particular domain. In other words, it is the schema definition of the semantic data.} that specifies these types
 of each of the \textit{things}. 
 
-We use the subset of DBpedia\footnote{http://wiki.dbpedia.org/downloads-2016-04}, which was generated from the March/April 2016 dump of Wikipedia. In this dataset, the \textit{things}, their attributes and 
-their relationships are extracted from the info-boxes (\texttt{infobox\_properties\_en.ttl}) using and the DBpedia Ontology (\texttt{dbpedia\_2016-04.owl}). We also use the types associated with the \textit{things}(\texttt{instance\_types\_en.ttl}) and the categories (\texttt{article\_categories\_en.ttl}) that they belong to.
+{\color{red} TODO: Show some graphs for dbpedia}
 
-\subsubsection{Project Motivation:}
-The project is motivated by 
-our assumption that if an Agent is able to classify things by understanding
-its attributes and relationships into some types, we could in the future 
-generalize it to an Agent that can act on the meaning of the things. 
-Some examples applications for domains above are:
-\begin{itemize}
-\item Linked Data - Agents can understand and automatically assist users at web scale \cite{berners2001semantic}.
-\item Spoken systems - Understanding user intent by Virtual Assistants like Siri, Alexa, etc. for home automation \cite{tang2017emergence}. 
-\item Predicting and Recommending links in Social Networks \cite{backstrom2011supervised}.
-\item Scene recognition - Urban scene understanding and its possible outdoor applications like understanding traffic, etc. \cite{cordts2015cityscapes}.
-\item Virtural Assistants like Mara \cite{schmeil2007mara} in Virtual \& Augmented Reality environments.
-\end{itemize}
+We use the subset of DBpedia\footnote{http://wiki.dbpedia.org/downloads-2016-04}, which was generated from the March/April 2016 dump of Wikipedia. In this dataset, the \textit{things}, their attributes and 
+their relationships are extracted from the info-boxes (\texttt{infobox\_properties\_en.ttl}) using and the DBpedia Ontology (\texttt{dbpedia\_2016-04.owl}). We also use the types associated with the \textit{things}(\texttt{instance\_types\_en.ttl} \& \texttt{yago\_types.ttl}) and the categories (\texttt{article\_categories\_en.ttl}) that they belong to.
 
 Our goal is to try and estimate the types and categories of the \textit{things} from their attributes and relationships. 
 For example, if you look at examples of categories in DBpedia, Achilies has been
@@ -142,35 +144,311 @@ What makes him part of those categories? Can we learn the definitions of these
 based on the attributes and relationships of Achilies? 
 
 \subsubsection{Other Approaches:}
+{\color{red} TODO: Explain the approaches briefly}
 
 \subsection{Problem Statement}
-As mentioned earlier, the goal of this project is to apply Machine Learning 
-to classify the \textit{things} in DBpedia and identify their types and categories
+\label{problemStatement}
+Traditionally, type inferencing in semantic data has been done with inference engines (e.g. OWL-DL uses SHIQ description logics \cite{horrocks2003shiq} for inferences). However, as pointed out in Paulheim et. al \cite{paulheim2013type}, the actual Semantic Web data in the wild contains a lot of noise. Even a single noisy instance along with the inference rules can break the entailements in the types, or can add new entailments that may be incorrect. We thus need a robust way for identifying the types of the \textit{things} in the Semantic Web.  
+
+In addition to the noise, the Semantic Web also makes an \textit{Open World Assumption} \cite{drummond2006open}. In the \textit{Open World Asumption} the Agent cannot assume that some proposition (i.e. some fact in the world) is \textbf{NOT TRUE} because it is \texttt{false}. Since the Agent may not have full visibility into the data, it may think the proposition to be \texttt{false} when it actually might be \texttt{true}. In classic Machine Learning on the other hand, typically the feature is known to be \texttt{true} or \texttt{false} depending on whether it is \textbf{actually \texttt{true} or \texttt{false}} (i.e. ground truth is known). Our type classification should also consider this assumption.
+
+\subsubsection{Problem Definition}
+To achieve robustnessand to overcome the \textit{Open World Assumption}, we need to train a classifier using existing data so that we can create a generic model that can be used for classifying unseen data. A Multi-class classifier in Machine Learning is used to create a model to classify data into one of multiple classes. However, in DBpedia, one \textit{thing} can belong to more than one classes. The Canadian Institute for Advanced Research's \texttt{CIFAR-100} dataset is another example where the data can have more than one classes associated with it\cite{krizhevsky2009learning}. To perform such classification, we need to create a Multi-label classifier\cite{tsoumakas2006multi}. 
+
+``Given the Semantic Graph for \textit{things} in DBpedia (containing their attributes and relationships with other \textit{things}), create a Multi-label classifier using Machine Learning techniques that can 
+provide a robust type inferencing mechanism in the presence of noisy data \& the inherant \textit{Open World Assumption} made by the Semantic Web."
+
+\subsubsection{Proposed Approach}
+We classify the \textit{things} in DBpedia and identify their types and categories
 based on the semantic graph of 
-their attributes andtheir relationships. 
-To model this as a classification problem, we look at our algorithms
-available in Machine Learning. The classic algorithms in Machine Learning
-deal with feature vectors (e.g. the features used for classification, etc.) and are aimed
-at essentially discriminating between different inputs to those features to identify the target type/s. 
+their attributes and their relationships. 
+While the dataset is a Semantic Graph, the classic algorithms in Machine Learning
+deal with feature vectors (e.g. the numerical features used to represent the object, etc.) and are aimed
+at discriminating between different inputs to those features to identify the target type/s. 
+So, in order to perform machine learning, 
+we need to extract features for the things in the graph \& also create the
+target multi-label vectors to be used for training \& testing. 
 
-%To make decisions based on the state of the world an A.I. Agent can
-%read from the world using sensors etc., can easily perform a classification task
-%once it learns the relation between the data to its output decision. For the most
-%part, the feature vectors used in such cases as input encode the attributes of
-%the things, BUT not necessarily the relationships between things. And while
-%the designer of the inputs and outputs of the algorithms may manually craft
-%features to represent some of these relationships, the Agent has no automatic
-%way of comprehending and using these relationships.
-\subsubsection{Graph Classification:}
+We extract features for each thing in DBpedia 
+(hereafter called as an \textit{individual}s)
+using a Random Walk approach \cite{tsuda2010graph}. For each random walk, we start at the
+individual in the Semantic Graph. We can choose a step randomly among different kind of steps - note the attribute / relationship / incoming relationship presence and stay on same node OR note the relationship / incoming relationship name and traverse to adjacent node. The sequence of steps noted down for the walk together form the extracted feature. 
 
-\subsubsection{Proposed Approach:}
+By varying the length, the number of walks, and the type of steps taken, we can extract different kind of features.
+More number of walks give more number of features, which means more data to classify with. Longer length of walks result in longer sequence of steps, which means very specialized descriptions of the individual. And finally, different step types adds to the complexity of descriptions.
+
+Meanwhile, each individual
+has one or more types  associated with it. We also extract these target classes. Our target classes for each individual can come from three sources - types from the DBpedia Ontology, DBpedia categories
+and types from the Yago \cite{suchanek2007yago} Ontology (all three downloaded from the source mentioned in Section \ref{dataset} / Dataset). For each of these sources, we create multi-label target vectors dataset such that the value for the label for a type \textit{t} in the vector for each individual is \texttt{1} if the individual is an instance of type \textit{t}, or else is \texttt{0}.
+
+Once we extract the features and the target types, 
+we can then perform the Multi-label classification.  
+For each of the three sources, we vary the number of walks, length of the 
+walks and the type of the steps taken to generate the datasets and 
+then use Deep Learning to perform the Multi-label classification. 
+
+We compare the effect of varying the random walk parameters with out chosen metrics (see below) 
+and investigate some different Fully Connected Deep Neural Network
+architectures. We also compare our results with a baseline using simple Logistic Regression, 
+ and also with SDtype\cite{paulheim2013type} and SLCN\cite{melo2016type}.
 
 \subsubsection{Expected Result:}
+By comparing simple Logistic Regression and multiple Deep Learning architectures should confirm the soundness of our approach that Deep Learning approach gives more accurate results. It should also help us pick one Deep Learning architecture for the next comparison.
 
-\section{Preprocessing}
+SDtype\cite{paulheim2013type} and SLCN\cite{melo2016type} both only use incoming relationships. We compare our classification performance with these two for both DBpedia Ontology types as well as Yago Ontology types. Our hope is that the random walk features will have comparable performane to these two approaches. At the least, we expect that using the same available data as the above two approaches, our Deep Learning architecture produces better results.
+
+\subsubsection{Metrics:}
+The \texttt{$F_1$-score} metric is the harmonic mean of the \texttt{precision} and the \texttt{recall} of a model's classification\footnote{https://en.wikipedia.org/wiki/F1\_score}. 
+
+\[F_1 = \frac{2 \cdot precision \cdot recall}{precision + recall}\]
+
+where, \texttt{precision} is the ratio of textit{true positive classifications} to the \textit{predicted positive classifications} (i.e. \textit{true positives} + \textit{false positive} classifications) and \texttt{recall} is the ratio of \textit{true positive classifications} to the \textit{possible positive classifications} (i.e. \textit{true positives} + \textit{false negative} classifications). Compared to the \texttt{accuracy} metric, which is the ratio of \textit{correct classifications} to \textit{total classifications}, the $F_1$-score is a more robust mettric for model performance since it penalizes the model more heavily for both \textit{false positive} as well as \textit{false negative} classifications.
+
+We have two main reasons for choosing  $F_1$-score as our metric. First, since we have multiple-labels and a large dataset, the presence of the labels is sparse. Because of this, the number of \textit{true negatives} wil overpower the calculation of the \texttt{accuracy} score, as they will dwarf the number of \texttt{false positives} and \textit{false negatives}. Second, both SDtype\cite{paulheim2013type} and SLCN\cite{melo2016type} use the $F_1$-score metric, the performance of our model could be easily compared.
+
+Since we are performing Multi-label classification, our output values will be a vector with length equal to the number of classes and having binary values with a value of 1 in position \textit{i} when the individual belongs to class $C_i$. We need to specialize our definition of the $F_1$ score for such data. Like in the SLCN\cite{melo2016type} paper, we we re-define  \texttt{precision}, \texttt{recall}, and \texttt{$F_1$-score} as $hP$, $hR$ and $hF$ as follows:
+
+\[hP = \frac{\displaystyle\sum_{i=1}^{|C|} tp_i}{\displaystyle\sum_{i=1}^{|C|} tp_i + fp_i}\]
+
+\[hR= \frac{\displaystyle\sum_{i=1}^{|C|} tp_i}{\displaystyle\sum_{i=1}^{|C|} tp_i + fn_i}\]
+
+\[hF = \frac{2 \cdot hP \cdot hR}{hP + hR}\]
+
+where $tp$ are the \textit{true positive}, $fp$ are the \textit{false positive} and $fn$ are the \textit{false positive} classifications. 
+
+
+\section{Generating Training \& Testing Dataset from the Semantic Graph}
+As meentioned in Section~\ref{problemStatement}, we need to first convert our Semantic Graph data and the types associated with the individuals in the graph into feature vectors and target vectors that can be used for Multi-label classification. 
+
+\subsection{Creating Multi-label Target Vectors:}
+\label{targetVector}
+Our target classes for each individual can come from three sources - types from the DBpedia Ontology, DBpedia categories
+and types from the Yago \cite{suchanek2007yago} Ontology. To extract the multi-label target vectors, we first take the inner join of each of those three sources with the individuals available in the graph. We then create a multi-label target vector for each individual such that the value for the label for a type \textit{t} in the vector is \texttt{1} if the individual is an instance of type \textit{t}, or else is \texttt{0}.
+Once we identify the inner-join and the multi-label vectors, we remove the individuals from the Semantic graph that do not have type information. While this step reduces the possible relationships we may encounter with individuals for which there is no type information available, it also removes spurious indviduals (e.g. things generated from Wikipedia articles that have no discernable types, things in external datasets for which we do not have type data, etc.). See the detailed algorithm in Figure~\ref{createTargetVectors}.
+\begin{figure}
+\begin{lstlisting}[language=Python,numbers=left, stepnumber=1, frame=single]
+def createTargetVectors(semanticGraph, typeFile):
+   types = {}
+   typeIndex = {}
+
+   for individual, type in typeFile:
+      # We need to ensure that top level types are removed, 
+      # since they will be true for all individuals.
+      # Note: 'owl:Thing' and 'rdfs:Resource' are 
+      # standard compact URLs for 
+      # top level Semantic Web classes.
+      if (type == 'owl:Thing' || type=='rdfs:Resource'):
+         continue
+      
+      # Perform left-join by checking if individual 
+      # is present in semantic graph
+      if (individual in semanticGraph):
+         types[individual].append(type)
+         if(type not in typeIndex):
+           # By adding to type index here, we ensure that 
+           # all individuals at least have one type
+            typeIndex[type]=len(types)-1
+
+   targetVectors = []
+   for individual in semanticGraph:
+      # Perform right-join by checking if 
+      # individual has a type associated with it
+      if (individual not in types):
+         # Remove individual from graph
+         # to complete inner-join
+         del semanticGraph[individual]
+      else:
+         # Create the multi-label target vector such that
+         # targetVector[type] = 1, if individual is 
+         # an instance of that type; and 
+         # targetVector[type] = 0, otherwise
+         targetVector = [0] * len(types)
+         for type in types[individual]:
+             targetVector[typeIndex[type]] = 1
+         targetVectors[individual].append(targetVector)
+
+   return targetVectors
+
+#Create the multi-label target vectors
+targetVectors = createTargetVectors(semanticGraph, typeFile)
+\end{lstlisting}
+\caption{Algorithm for Creating the Multi-label Target Vectors}
+\label{createTargetVectors}
+\end{figure}
+
+\subsection{Feature Extraction from the Semantic Graph:}
+\label{featureExtraction}
+We use a Random Walk approach to extract the features for each individual \cite{tsuda2010graph} in the reduced semantic graph. 
+We start with the individual for which the features are to be extracted. We then create a 
+list of possible steps that we can take from that node from one or more different types of steps available. 
+With the DBpedia semantic graph, the type of steps available are - 
+presence of an attribute, presence of an outgoing relationship, presence of an incoming relationship (where for all these three, after taking the step we will land on the same node), and a step on an outgoing relationship (where we will land on a different node with whom the node has a relationship). 
+We then select one step from this list of available steps to land on the next node. We can then take the next step. 
+By taking \textit{l} such steps
+we form a path. 
+This random walk of length \textit{l} then becomes one feature for our classification. By performing \textit{n} such random walks starting at one instance, we can extract upto \textit{n} unique features for that instance. We repeat this for each instance, to extract features for the entire dataset.
+See the detailed algorithm in Figure~\ref{extractFeatures}. 
+\begin{figure}
+\begin{lstlisting}[language=Python,numbers=left, stepnumber=1, frame=single]
+def extractFeatures(semanticGraph, n, maxLength, stepTypes):
+   walkIndex = {}
+   walks = {}
+   for individual in semanticGraph:
+      # For n number of walks
+      for i in range(n):
+	# To choose the length, we compare 2 strategies:
+	# Strategy 1: Fixed Length
+	#   Here, the length is fixed to maxLength
+	# Strategy 2: Variable length from 1 upto maxLength
+        #   Here, the length is chosen with probability
+        #       (maxLength-l+1) / (1+2+...+maxLength)
+        #   This allows for shorter walks to be more dominant,
+        #   since longer walks lead to sparser features.
+        #   For example, chooseLength(2) 
+        #     returns l=1 with probability 2/3
+        #     returns l=2 with probability 1/3
+         l = chooseLength(maxLength)  
+         walk = []
+         currentNode=individual
+         for step in range(l):
+            availableSteps = []
+            nextNodes = []
+            # Create list of available steps from stepTypes
+            # (Assume standard graph helper functions below)
+            # 1. Attribute presence
+            if ('attribute' in stepTypes):
+               for attr,value in currentNode.attributes():
+                  availableSteps.append('hasAttr_' + attr)
+                  nextNode.append(currentNode)
+            # 2. Relationship presence
+            if ('relationship' in stepTypes):
+               for rel, node in currentNode.links():
+                  availableSteps.append('hasRel_' + rel)
+                  nextNode.append(currentNode)
+            # 3. Incoming relationship presence
+            if ('incoming' in stepTypes):
+               for rel, node in currentNode.incomingLinks():
+                  availableSteps.append('hasInRel_' + rel)
+                  nextNode.append(currentNode)
+            # 4. Relationship step 
+            # If l=1, then this is same as 2 \& 3, 
+            # and so we add these only if l>1
+            if ('step' in stepTypes && l>1):
+               for rel, node in currentNode.links():
+                  availableSteps.append(rel + '->')
+                  nextNode.append(node)
+               for rel, node in currentNode.incomingLinks():
+                  availableSteps.append (rel + '<-')
+                  nextNode.append(node)
+           
+           # Take a step randomly
+           stepIndex = randInt(0,len(availableSteps)-1)
+           step = availableSteps[stepIndex]
+           nextNode = nextNodes[stepIndex] 
+           walk.append(step) #Append to the walk
+           currentNode = nextNode #Move to next node
+   return walks
+
+#Extract features
+extractedFeatures = extractFeatures(semanticGraph, n, 
+          maxLength, stepTypes)
+\end{lstlisting}
+\caption{Algorithm for Extracting Features Using Random Walks}
+\label{extractFeatures}
+\end{figure}
+
+We take some additional precautions in preparing the data. We make sure that the walks are not empty. This can happen if there are no attributes or relationships extracted for the individual from Wikipedia. Individuals where no walks were found are also removed. Also, since the next node after taking the the attribute, relationship and incoming relationship steps is the same node, it may introduce multiple features with the same steps but different orders. To eliminate this issue, we sort the steps taken at the same node in a lexicographic order before adding their sequence to the walk.
+ 
+\subsubsection{Important Note on Open vs. Closed World Assumption}
+It is important to note that the meaning of the feature values, which are either \texttt{0} or \texttt{1}, here is different than classic Machine Learning. In classic Machine Learning all the feature values are known to be \texttt{0} or \texttt{1} before hand. That is, the value of the feature is \texttt{1} if the feature is \texttt{present}, and else it is \texttt{0}. With the Random Walk method, however, the meaning changes. The feature is \texttt{1} if the random walk was \texttt{detected}. But the feature may be \texttt{0}, even if the feature is \texttt{present} but \texttt{not detected}. We feel this nuance, which is similar to making an \textit{Open World Assumption}, is an important distinction to classic Machine Learning, which makes a \textit{Closed World Assumption}. Fortunately, this is not too bad, since by default the Semantic Web makes an Open World Assumption. 
+
+Another thing to note here is that even if we ask our algorithm to return \texttt{n} number of walks, if some of the walks are traversed multiple times, then the total number of features extracted may not be \texttt{n}.
+
+\section{Analysis}
+After extracting the feature vectors and the target vectors , we performed analysis to explore the data, identify the algorithms to create the classifier, and highlight the benchmark/s against which we will compare the performance of our classifier.
+
+\subsection{Data Exploration}
+
+\subsubsection{Data Source}
+As mentioned earlier, the source of our data is a subset of DBpedia\footnote{http://wiki.dbpedia.org/downloads-2016-04}, which was generated from the March/April 2016 dump of Wikipedia. While the data is available for multiple languages (English, French, German, etc.) and multiple RDF formats (Turtle, N-Triples, etc.)\footnote{https://en.wikipedia.org/wiki/Resource\_Description\_Framework\#Serialization\_formats}, we restrict ourselves to the English dumps in N-Triple format. The subset of data we use can be described as two parts:
+
+\begin{itemize}
+  \item \textbf{The properties file:} The main semantic data  (attributes and relationships) that we use for our Semantic Graph are the facts extracted from Infoboxes in Wikipedia. We use the \texttt{infobox\_properties\_en.ttl} file as the source for this data. 
+  \item \textbf{The type files:} Our target classes for each individual can come from three sources - types from the DBpedia Ontology, DBpedia categories and types from the Yago Ontology. At the end of our paper, we present the performance of our algorithm for each of these sources. The source files used for these sources are \texttt{instance\_types\_en.ttl}, \texttt{article\_categories\_en.ttl} \& \texttt{yago\_types.ttl}, respectively. We also use the DBpedia ontology (\texttt{dbpedia\_2016-04.owl}) to infer the parent types for those in \texttt{instance\_types\_en.ttl}.
+\end{itemize}
+
+The original number of facts in each of these sources are shown in Table~\ref{tab:sources}.
+
+\begin{table}
+\caption{Number of facts}
+\begin{center}
+  \begin{tabular}{ | c | c | }
+    \hline
+    \textbf{Source file} & \textbf{Number of facts (\#triples}) \\
+    \hline
+    \texttt{infobox\_properties\_en.ttl} & 30,024,094 \\
+    \hline
+    \texttt{instance\_types\_en.ttl} & 5,214,242 \\
+    \hline
+    \texttt{article\_categories\_en.ttl} & 22,583,312 \\
+    \hline
+    \texttt{yago\_types.ttl} & 57,879,000 \\
+    \hline
+  \end{tabular}
+\end{center}
+\label{tab:sources}.
+\end{table}
+
+\subsubsection{Reduced Semantic Graphs After Creating Target Vectors}
+As explained in the algorithm in Section~\ref{targetVector}, we take the inner-join of the type data and the semantic graph to reduce the number of instances and remove unnecessary individuals without types. For the three type sources and the properties file, we have three reduced Semantic Graphs - \texttt{DBpedia-OntologyTypes}, \texttt{DBpedia-Categories}, \texttt{DBpedia-YagoTypes}. The statistics about these are described in Table~\ref{tab:graphStats1} and Table~\ref{tab:graphStats2}.
+
+\begin{table} [h]
+\centering
+\caption{Total Number of Individuals and Average Number of Attributes, Relationships \& Incoming Relationships}.
+\label{tab:graphStats1}
+  \begin{tabular}{ | c | c | c | c | c | }
+    \hline
+    \textbf{Semantic Graph} & \textbf{Total} & \textbf{Average} & \textbf{Average}& \textbf{Average}\\
+    & \textbf{\#} & \textbf{\# attri-\-} & \textbf{\#relation-\-}& \textbf{\# incoming}\\
+    & \textbf{individuals} & \textbf{butes} & \textbf{ships} &  \textbf{relationships} \\
+    \hline
+    \texttt{DBpedia-OntologyTypes} & 3.18M & 5.78 & 3.58 & 2.74 \\
+    \hline
+    \texttt{DBpedia-Categories} & 1 & 1 & 1 & 1 \\
+    \hline
+    \texttt{DBpedia-YagoTypes} & 1 & 1 & 1 & 1 \\
+    \hline
+  \end{tabular}
+\end{table}
+\begin{table}[h]
+\centering
+\caption{Average Number of Distinct Attributes, Relationships \& Incoming Relationships}
+\label{tab:graphStats2}.
+  \begin{tabular}{ | c | c | c | c | }
+    \hline
+    \textbf{Semantic Graph}  & \textbf{Average} & \textbf{Average}& \textbf{Average}\\
+     & \textbf{\# attri-\-} & \textbf{\#relation-\-}& \textbf{\# incoming}\\
+     & \textbf{butes} & \textbf{ships} &  \textbf{relationships} \\
+    \hline
+    \texttt{DBpedia-OntologyTypes}  & 4.85 & 2.30 & 0.425 \\
+    \hline
+    \texttt{DBpedia-Categories} & 1 & 1 & 1 \\
+    \hline
+    \texttt{DBpedia-YagoTypes} & 1 & 1 & 1 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\subsubsection{Traing \& Testing Dataset from Extracted Features and Target Vectors}
+From the above reduced Semantic Graphs, we then use the algorithm described in Section~\ref{featureExtraction} to extract features for classification. We create various training and testing datasets to explore the capability of our approach. We do not describe these datasets here, and instead choose to describe them in the next section and present their statistics as we come across them in the following sections.  
+
+\subsection{Algorithms \& Techniques}
+
+\subsection{Exploratory Visualizations}
+
+\subsection{Benchmarks}
 
 \bibliography{reportBib}
 \bibliographystyle{splncs}
 
 \end{document}
-s
