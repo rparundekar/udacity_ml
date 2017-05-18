@@ -70,8 +70,10 @@ def question1(s, t):
             Running through the outer loop is O(s), and the most
             expensive inside function has Average and Worst case as O(1)
             Average case: O(s) * O(1) = O(s)
-            Worst case: O(s) * O(1)  = O(s)
+            Worst case: O(s) * O(1)  = O(s) or O(t)  whichever is greater
             where, s is length of string s.
+        Space complexity:
+            O(s) or O(t) whichever is greater
             
     """
     
@@ -117,6 +119,8 @@ def question2(a):
         Function is case insensitive
         Time complexity:
             Worst case: O(n)*O(n) = O(n^2)
+        Space complexity:
+            O(n)
     """
     # Trivial case
     if not len(a):
@@ -194,6 +198,9 @@ def question3(graph):
                 which is O(|E| log(|V|))
                 where |V| is number of vertices and |E| is number of edges.
                 This is because the loop repeats for all vertices and edges exactly once.
+        Space complexity:
+            O(|V| + |E|) * O(2 * V), where the first term is for the graph representation, and second term is for the hypotheses
+            And so, the space complexity is O(|E|*|V|)
     """
     
     def addHypotheses(vertex, edges):
@@ -299,18 +306,22 @@ def question3(graph):
 print "\n\nQuestion 3:"
 graph1 = {'a': [('b', 1)], 'b': [('a', 1), ('c', 5)], 'c': [('b', 5)]}
 mst1=question3(graph1)
+# Expected:  {'a': [('b', 1)], 'c': [('b', 5)], 'b': [('a', 1), ('c', 5)]}
 print "\tTest Case 1 - MST : {}".format(mst1)  
 
 graph2 = {'a': [('b', 3), ('c', 1)], 'b': [('a', 3), ('c', 6)], 'c': [('a', 1), ('b', 6)]}
 mst2=question3(graph2)
+# Expected: {'a': [('c', 1), ('b', 3)], 'c': [('a', 1)], 'b': [('a', 3)]}
 print "\tTest Case 2 - MST : {}".format(mst2)  
 
 graph3 = {'a': [('b', 1), ('d', 1)], 'b': [('a', 1), ('c', 1)], 'c': [('d', 1), ('b', 1)], 'd': [('c', 1), ('a', 1)]}
 mst3=question3(graph3)
+# Expected: {'a': [('b', 1), ('d', 1)], 'c': [('b', 1)], 'b': [('a', 1), ('c', 1)], 'd': [('a', 1)]}
 print "\tTest Case 3 (should return linear tree) - MST : {}".format(mst3)  
 
 graph4 = {'a': []}
 mst4=question3(graph4)
+# Expected: {'a': []}
 print "\tTest Case 4 (should return itself) - MST : {}".format(mst4)  
 
 """
@@ -329,6 +340,9 @@ def question4(T, r, n1, n2):
         But as we are moving through an adjacent matrix, the cost of finding the child node is O(n/2). 
         Cost of maintaining the path, to search for n2 in the path also takes O (log(n))
         So the total complexity is O(n * log(n)^2) in average case and O (n ^ 2 * log(n) ) worst case.
+    Space complexity:
+        Space complexity of adjacency matrix is O(n ^ 2) and that of the path is O(log(n)).
+        So complete space complexity is O(n^2 + log(n)) = O(n^2)
     """
     # We store the path to n1 in this variable
     path = []
@@ -408,6 +422,11 @@ def question5(ll, m):
         We also reverse back the links to the original
         Assumptions:
             There is no linked list class that holds size of the list
+        Time complexity:
+            O(2 * n) = O(n) - for traveling the list twice. 
+        Space complexity: 
+            O(n) 
+        where n is number of nodes
     """
     
     #First we move to the end of the list, and reverse the links while doing so.
