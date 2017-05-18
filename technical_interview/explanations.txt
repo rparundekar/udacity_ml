@@ -1,0 +1,53 @@
+Question 1:
+To find the anagram of t present in s, we can try to see if some substring of length s has same characters and their count as t.
+
+Since the order of the characters in t doesn't matter, we can use a dictionary that holds the characters and the counts (An array could possibly be an improvement, since the number of characters are fixed). So, to do this we can create a dictionary of t with the characters and their counts and then compare the dictionary of the substring with it. We need to create a dictionary of t only once.
+
+The first solution that comes to mind is to have an outer loop for s, and extracting substrings of length t from the current position. Then compare the two dictionaries.
+
+Here, the dictionary comparison is using hash function and so average case complexity is O(1)*O(1) and worst case is O(m)*O(m) where m is the size of the hash. Fortunately, the hash length is max 26 (or the number of characters) and is constant. So, complexity is O(1).
+But, the extracting substring at each iteration is the most expensive operation.
+
+An improvement can be where we iteratively maintain a dictionary of the substring as we move a sliding window of the substring in s. We can update the hash and decrease the count of character from the hash when we move past it. The cost then becomes O(m) which is O(1) since m is constant.
+
+So the final solution uses a sliding window, maintains a dictionary iteratively and compares it with the dictionary of t with the characters and their counts.
+Efficiency: The Average and Worst case complexity is O(len(s)) or O(len(t)) whichever is greater.
+
+Question 2:
+One of the features of the palindrome is that the alphabets are mirrors on left and right side. If it's an even length palindrome of length n, then first n/2 characters are the mirrors of next n/2 characters. For an odd length palindrome, i = roof(n/2) is the middle character and characters up to i (not including) on the left are mirrored on the right.
+So, we use this property for our optimization.
+
+Our outer loop will iterate through all characters as possible pivot points and check for even and odd length palindromes around it.
+For even length, we can count the number of characters to the left (including) that are same as characters on the right.
+For odd length, we do the same, but we do not include the pivot character.
+
+If the extracted palindrome using the count of number of characters is longer than the existing longest palindrome, then we have a new longest palindrome.
+
+Efficiency: The inner check around the pivot runs O(n/2) worst case but trims search space fast if palindrome is not present. The outer loop runs O(n). And so the solution is O(n^2)
+
+Question 3:
+We can use Prim's algorithm for getting the minimum spanning tree (MST). The assumption is that all vertices are connected to some other vertex of the graph.
+The idea for this algorithm is that we maintain a set of hypotheses of the different vertices that are connected to the vertices in the graph, but are not yet in the tree.
+The hypotheses contains a hash map of the vertex and its minimum cost to join to MST, and another hash map of that vertex and the nearest vertex in the MST to it.
+We start with one vertex in the MST and the hypotheses generated from the edges that it is connected to.
+While there is some vertex yet to be connected to the MST:
+i) We explore our hypotheses and pick the vertex with the lowest cost
+ii) Add the edge to that vertex with that cost to the MST.
+iii) We then use the edges outgoing from this vertex and add the other vertices to the hypotheses if they are not already in the MST.
+Efficiency: The complexity for this is O(|V| + |E| log(|V|)), which is O(|E| log(|V|)) as we visit all vertexes only once and worst case consider all edges (but only once). The log(|V|) is the cost of maintaining the hypotheses.
+We could have used a heap for the edges and sorted them, but the complexity would have been O(|E| log |E|)
+
+
+Question 4:
+We assume that the data is correct for the BST, and all BST constraints are satisfied. From the root, we first search for n1. This can be done in O(log(n)) steps.
+We note down the path from the root to n1. Then we start again at the root and search for n2. This time we check if the current node is on the path. If yes, it is our current least common ancestor. The moment we reach some node where it is not on the path, our least common ancestor was the one in the previous iteration.
+Efficiency: The time complexity should be O(2 * log(n)) in average case and O(2 * n) in the worst case. But since we use an adjacency matrix, there is an additional step to search for the child of a node, with max O(n/2) steps.
+The cost of maintaining the path, to search for n2 in the path also takes O (log(n)). So the total complexity is O(n * log(n)^2) in average case and O (n ^ 2 * log(n) ) worst case.
+
+Question 5:
+We have a singly linked list. We assume that we only know the head, and there is no LinkedList class that holds the size when we add to the list.
+To reach the m-th node from the end we have to first traverse to the end and back. But since a singly linked list doesn't have back links, we need some way to move back.
+So we first move through all elements to reach the end and reverse the links. Then we move back to the front, counting m nodes to find the m-th element from the end.
+Of course, we also reverse the links to match the original.
+Efficiency: The time complexity for this is O(2*n)= O(n), since we move through the list twice (front and back).
+We could have used a separate stack, but that increases space complexity.
