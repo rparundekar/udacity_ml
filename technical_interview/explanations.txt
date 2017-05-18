@@ -11,7 +11,7 @@ But, the extracting substring at each iteration is the most expensive operation.
 An improvement can be where we iteratively maintain a dictionary of the substring as we move a sliding window of the substring in s. We can update the hash and decrease the count of character from the hash when we move past it. The cost then becomes O(m) which is O(1) since m is constant.
 
 So the final solution uses a sliding window, maintains a dictionary iteratively and compares it with the dictionary of t with the characters and their counts.
-Efficiency: The Average and Worst case complexity is O(len(s)) or O(len(t)) whichever is greater. Space complexity is O(len(s)) * O(m). So the space complexity is O(len(s)) or O(len(t)), whichever is greater
+Efficiency: The Average and Worst case complexity is O(len(s)) or O(len(t)) whichever is greater. Space complexity is O(len(s)+len(t)) for the hashes created. So the space complexity is O(len(s)) or O(len(t)), whichever is greater.
 
 Question 2:
 One of the features of the palindrome is that the alphabets are mirrors on left and right side. If it's an even length palindrome of length n, then first n/2 characters are the mirrors of next n/2 characters. For an odd length palindrome, i = roof(n/2) is the middle character and characters up to i (not including) on the left are mirrored on the right.
@@ -23,7 +23,7 @@ For odd length, we do the same, but we do not include the pivot character.
 
 If the extracted palindrome using the count of number of characters is longer than the existing longest palindrome, then we have a new longest palindrome.
 
-Efficiency: The inner check around the pivot runs O(n/2) worst case but trims search space fast if palindrome is not present. The outer loop runs O(n). And so the solution is O(n^2). Since we do our processing in memory, our space complexity is O(n).
+Efficiency: The inner check around the pivot runs O(n/2) worst case but trims search space fast if palindrome is not present. The outer loop runs O(n). And so the solution is O(n^2). Since we only create the space for max length palindrome, our space complexity is O(n).
 
 Question 3:
 We can use Prim's algorithm for getting the minimum spanning tree (MST). The assumption is that all vertices are connected to some other vertex of the graph.
@@ -36,20 +36,22 @@ ii) Add the edge to that vertex with that cost to the MST.
 iii) We then use the edges outgoing from this vertex and add the other vertices to the hypotheses if they are not already in the MST.
 Efficiency: The complexity for this is O(|V| + |E| log(|V|)), which is O(|E| log(|V|)) as we visit all vertexes only once and worst case consider all edges (but only once). The log(|V|) is the cost of maintaining the hypotheses.
 We could have used a heap for the edges and sorted them, but the complexity would have been O(|E| log |E|).
-The space complexity is O(|V| + |E|) * O(2 * V), where the first term is for the graph representation, and second term is for the hypotheses. And so, the space complexity is O(|E|*|V|)
+The space complexity is O(|V| + |E|) * O(2 * V), where the first term is for the MST representation, and second term is for the hypotheses. And so, the space complexity is O(|E|*|V|)
 
 
 Question 4:
-We assume that the data is correct for the BST, and all BST constraints are satisfied. From the root, we first search for n1. This can be done in O(log(n)) steps.
-We note down the path from the root to n1. Then we start again at the root and search for n2. This time we check if the current node is on the path. If yes, it is our current least common ancestor. The moment we reach some node where it is not on the path, our least common ancestor was the one in the previous iteration.
-Efficiency: The time complexity should be O(2 * log(n)) in average case and O(2 * n) in the worst case. But since we use an adjacency matrix, there is an additional step to search for the child of a node, with max O(n/2) steps.
-The cost of maintaining the path, to search for n2 in the path also takes O (log(n)). So the total complexity is O(n * log(n)^2) in average case and O (n ^ 2 * log(n) ) worst case.
-The Space complexity of adjacency matrix is O(n ^ 2) and that of the path is O(log(n)). So complete space complexity is O(n^2 + log(n)) = O(n^2)
+We assume that the data is correct for the BST, and all BST constraints are satisfied.
+Find the LCA by recursively searching from top to bottom (we use iteration though, not recursion).
+  We Start with root as current
+  If (n1<=current and n2>=current) then current is the LCA
+  If both are less than current, then we find the left child in the matrix and make that current
+  If both are greater than current, then we find the right in the matrix child and make that current
+  We repeat this till we find the LCA.
+Efficiency: Time complexity: In an actual binary tree, with nodes : this would be O(log(n)) average case and O (n) worst case. But as we are moving through an adjacent matrix, there is some cost of finding the left or right child node. The time complexity = O(n * log(n))
+Space complexity: Space complexity is O(1) since we are not creating any new data structures.
 
 Question 5:
-We have a singly linked list. We assume that we only know the head, and there is no LinkedList class that holds the size when we add to the list.
-To reach the m-th node from the end we have to first traverse to the end and back. But since a singly linked list doesn't have back links, we need some way to move back.
-So we first move through all elements to reach the end and reverse the links. Then we move back to the front, counting m nodes to find the m-th element from the end.
-Of course, we also reverse the links to match the original.
-Efficiency: The time complexity for this is O(2*n)= O(n), since we move through the list twice (front and back).
-We could have used a separate stack, but that increases space complexity. Space complexity=O(n) for the nodes in the list.
+We have a singly linked list. We assume that we only know the head, and there is no LinkedList class that holds the size when we add to the list. Also, we assume there is no loop.
+To reach the m-th node from the end we first traverse to the end and count the nodes to determine the size.
+Then we traverse the list the second time, counting till we reach the (size-m)-th node
+Efficiency: The time complexity for this is O(2*n)= O(n), since we move through the list twice. Space complexity=O(1) since we are not creating a new list.

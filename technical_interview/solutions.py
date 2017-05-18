@@ -10,6 +10,8 @@ def question1(s, t):
         Average case: O(l) 
         Worst case: O(l) 
         Where l is greater of length of s or t.
+        Space complexity:
+            O(s+t) = O(s) or O(t) whichever is greater, since we need to create the hashes for both
     """
     
     # Define useful functions
@@ -72,9 +74,6 @@ def question1(s, t):
             Average case: O(s) * O(1) = O(s)
             Worst case: O(s) * O(1)  = O(s) or O(t)  whichever is greater
             where, s is length of string s.
-        Space complexity:
-            O(s) or O(t) whichever is greater
-            
     """
     
     # let's maintain a dictionary iteratively as we slide a window
@@ -120,7 +119,7 @@ def question2(a):
         Time complexity:
             Worst case: O(n)*O(n) = O(n^2)
         Space complexity:
-            O(n)
+            O(n), to hold the palindrome string of max length
     """
     # Trivial case
     if not len(a):
@@ -199,7 +198,7 @@ def question3(graph):
                 where |V| is number of vertices and |E| is number of edges.
                 This is because the loop repeats for all vertices and edges exactly once.
         Space complexity:
-            O(|V| + |E|) * O(2 * V), where the first term is for the graph representation, and second term is for the hypotheses
+            O(|V| + |E|) * O(2 * V), where the first term is for the MST representation, and second term is for the hypotheses.
             And so, the space complexity is O(|E|*|V|)
     """
     
@@ -333,66 +332,49 @@ def question4(T, r, n1, n2):
     """
     Function for finding the least common ancestor. 
     Assumption: The tree is correct in its data including BST and nodes are in the tree
-    We start from the root and do BST traversal twice. Once for finding the path to n1.
-    And once to finding the least common ancestor.
+    We start from the top of the tree and iterate from top to bottom of tree. 
+    We Start with root as current
+    If (n1<=current and n2>=current) then current is the LCA
+    If both are less than current, then we find the left child in the matrix and make that current  
+    If both are greater than current, then we find the right in the matrix child and make that current
+    We repeat this till we find the LCA.
     Time complexity:
-        In an actual binary tree, with nodes : this would be O(2 * log(n)) average case and O (2 * n) worst case.
-        But as we are moving through an adjacent matrix, the cost of finding the child node is O(n/2). 
-        Cost of maintaining the path, to search for n2 in the path also takes O (log(n))
-        So the total complexity is O(n * log(n)^2) in average case and O (n ^ 2 * log(n) ) worst case.
+        In an actual binary tree, with nodes : this would be O(log(n)) average case and O (n) worst case.
+        But as we are moving through an adjacent matrix, there is some cost of finding the left or right child node.
+        The time complexity = O(n * log(n))
     Space complexity:
-        Space complexity of adjacency matrix is O(n ^ 2) and that of the path is O(log(n)).
-        So complete space complexity is O(n^2 + log(n)) = O(n^2)
+        Space complexity is O(1) since we are not creating any new data structures.
     """
-    # We store the path to n1 in this variable
-    path = []
     # We start from r and traverse BST to reach search n1. We note down the path traversed
     current = r
-    for i in range(0, 5):
-        path.append(current)
-        if(current is n1):
-            break
-        next=-1 # To handle where no value is 1
-        #This is standard BST search
-        if(n1>current):
-            for j in range(current+1,len(T[r])):
-                if(T[r][j] is not 0):
-                    next = j
-        else:
-            for j in range(0,current-1):
-                if(T[r][j] > 0):
-                    next = T[r][j]
-        if(next<0):
-            break
-        current=next
-    # We start from r and traverse BST to reach search n2. 
-    # We verify if we are following the same path and break when the path are different
-    current = r
-    leastCommonAncestor = -1
-    for i in range(0, 5):
-        # While we are following the same path from the root, note the steps
-        if(current in path):
-            leastCommonAncestor = current
-        else:
-            #We are past the least common ancestor 
-            break
-        if(current is n2):
-            break
-        next=-1 # To handle where no value is 1
-        #This is standard BST search
-        if(n2>current):
-            for j in range(current+1,len(T[r])):
-                if(T[r][j] is not 0):
-                    next = j
-        else:
-            for j in range(0,current-1):
-                if(T[r][j] > 0):
-                    next = T[r][j]
-        if(next<0):
-            break
-        current=next
+    next=None
+
+    #swap n1 and n2 to make sure n1 < n2
+    if(n2<n1):
+        temp=n1
+        n1=n2
+        n2=temp
         
-    return leastCommonAncestor 
+    # Iterate from top to bottom of tree. 
+    # Start with root as current
+    # If (n1<=current and n2>=current) then current is the LCA
+    # If both are less than current, then we find the left child in the matrix and make that current  
+    # If both are greater than current, then we find the right in the matrix child and make that current
+    # We repeat this till we find the LCA.
+    while(True):
+        if(n1<=current and n2>=current):
+            #Found it!
+            break
+        elif(n1<current and n2<current):
+            for j in range(0,current-1):
+                if(T[current][j] > 0):
+                    next = T[current][j]
+        else:
+            for j in range(current+1,len(T[current])):
+                if(T[current][j] > 0):
+                    next = T[current][j]
+        current=next
+    return current
 
 print "\n\nQuestion 4:"
 lca = question4([[0, 1, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[1, 0, 0, 0, 1],[0, 0, 0, 0, 0]], 3, 1, 4)   
@@ -417,45 +399,38 @@ class Node(object):
 def question5(ll, m):
     """ 
         Function returns the element in linked list ll that is m elements from the end.
-        Idea here is to traverse to the end of the list, reversing it.
-        Then we move back to the front, and count the nodes and note the element at m counts.
-        We also reverse back the links to the original
+        Idea here is to traverse twice. Once to count the number of elements
+        and once to find the element.
         Assumptions:
-            There is no linked list class that holds size of the list
+            There is no linked list class that holds size of the list.
+            Linked list is clean and has no loops.
         Time complexity:
             O(2 * n) = O(n) - for traveling the list twice. 
         Space complexity: 
-            O(n) 
+            O(1), since we are not creating any new data structures 
         where n is number of nodes
     """
     
-    #First we move to the end of the list, and reverse the links while doing so.
+    #First we move to the end of the list, and count the number of nodes in the list.
     current=ll
-    previous=None
-    while(True):
-        nextNode = current.next
-        current.next = previous
-        if(nextNode is None):
-            break
-        previous=current
-        current = nextNode
+    size=0
+    while(current):
+        current = current.next
+        size+=1
 
-    count = m
+    if(m>size):
+        return None
+    
+    count = (size-(m-1))
     element = None
-    # Then we move back to the front, counting the number of elements
-    # We note the mth element.
-    # While moving to the front, we also reverse the links to point the links in the original direction
-    previous=None
-    while(True):
+    current = ll    
+    # Then we move again through the list counting the elements until we reach the size-mth element
+    while(current):
         count=count-1
         if(count==0):
             element=current
-        nextNode = current.next
-        current.next = previous
-        if(nextNode is None):
             break
-        previous=current
-        current=nextNode
+        current = current.next
 
     return element
     
